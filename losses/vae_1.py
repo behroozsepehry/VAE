@@ -5,11 +5,12 @@ from losses import base
 
 
 class Loss(base.VaeLossBase):
+    def __init__(self, *args, **kwargs):
+            super(Loss, self).__init__()
 
     # Reconstruction + KL divergence losses summed over all elements and batch
     def __call__(self, *args, **kwargs):
-        if len(args) != 4:
-            raise AssertionError('the function needs 4 arguments')
+        assert len(args) == 4
         x, recon_x, mu, logvar = tuple(args)
         BCE = F.binary_cross_entropy(recon_x, x.view(recon_x.size()), reduction='sum')
 

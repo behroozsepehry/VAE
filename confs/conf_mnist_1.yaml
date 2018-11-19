@@ -1,16 +1,17 @@
 {
-  "model":
+  # The higher level names must be same as the class name!
+  "Model":
     {
       "name": "mnist_simple_fc_1",
 
     },
 
-  "device":
+  "Device":
     {
       "name": "cuda",
     },
 
-  "optimizer":
+  "Optimizer":
     {
       "name": "Adam",
       "args":
@@ -19,7 +20,7 @@
         },
     },
 
-  "dataloader":
+  "Dataloader":
     {
       "name": "MNIST",
       "path": "files/datasets/MNIST/",
@@ -30,7 +31,7 @@
         },
     },
 
-  "trainer":
+  "Trainer":
     {
       "name": "trainer_1",
       "n_epochs": 100,
@@ -38,14 +39,14 @@
       "log_interval": 10,
     },
 
-  "tester":
+  "Tester":
     {
       "name": "tester_1",
-      "path": "files/results/",
+      "path": "files/results/MNIST/",
       "verbose": True,
     },
 
-  "loss":
+  "Loss":
     {
       "name": "vae_1",
     },

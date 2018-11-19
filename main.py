@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with open(args.conf_path, 'rb') as f:
         kwargs = yaml.load(f)
 
-        device_name = kwargs['device']['name']
+        device_name = kwargs['Device']['name']
         device = torch.device(device_name)
 
         model = mu.get_model(**kwargs).to(device)
@@ -23,8 +23,8 @@ if __name__ == '__main__':
         tester = mu.get_tester(**kwargs)
         loss = mu.get_loss_function(**kwargs)
 
-        n_epochs = kwargs['trainer']['n_epochs']
+        n_epochs = kwargs['Trainer']['n_epochs']
         for epoch in range(1, n_epochs + 1):
-            trainer(model, epoch, optimizer, trainer_loader, loss, device, **kwargs['trainer'])
-            tester(model, epoch, tester_loader, loss, device, **kwargs['tester'])
+            trainer(model, epoch, optimizer, trainer_loader, loss, device, **kwargs['Trainer'])
+            tester(model, epoch, tester_loader, loss, device, **kwargs['Tester'])
 
