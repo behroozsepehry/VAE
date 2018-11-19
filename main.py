@@ -21,7 +21,7 @@ if __name__ == '__main__':
         optimizer = mu.get_optimizer(model, **kwargs)
         trainer = mu.get_trainer(**kwargs)
         tester = mu.get_tester(**kwargs)
-        loss = mu.get_loss_function(**kwargs)
+        loss = mu.get_loss(**kwargs)
 
         n_epochs = kwargs['Trainer']['n_epochs']
         for epoch in range(1, n_epochs + 1):

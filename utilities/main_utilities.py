@@ -46,6 +46,5 @@ def get_tester(**kwargs):
     return get_instance('testers/', 'Tester', **kwargs)
 
 
-def get_loss_function(**kwargs):
+def get_loss(**kwargs):
     return get_instance('losses/', 'Loss', **kwargs)
-
