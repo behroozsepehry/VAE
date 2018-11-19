@@ -14,10 +14,11 @@ def test(model, epoch, tester_loader, loss_function, device, **kwargs):
     with torch.no_grad():
         for i, (data, _) in enumerate(tester_loader):
             data = data.to(device)
-            recon_batch, mu, logvar = model(data)
-            test_loss += loss_function(recon_batch, data, mu, logvar).item()
+            model_out = model(data)
+            test_loss += loss_function(*((data,)+model_out)).item()
             if i == 0:
                 n = min(data.size(0), 8)
+                recon_batch, mu, logvar = model_out
                 comparison = torch.cat([data[:n],
                                       recon_batch.view(data.size())[:n]])
                 save_image(comparison.cpu(),

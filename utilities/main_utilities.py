@@ -1,3 +1,5 @@
+import importlib.util
+
 import torch
 from torch import optim
 from torchvision import datasets, transforms
@@ -57,10 +59,11 @@ def get_tester(**kwargs):
 
 
 def get_loss_function(**kwargs):
-    loss_dict = {
-        'vae_1': vae_1,
-    }
     loss_name = kwargs['loss']['name']
-    loss = loss_dict[loss_name].loss
+    spec = importlib.util.spec_from_file_location("loss_spec", "losses/"+loss_name+'.py')
+    loss_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(loss_module)
+
+    loss = loss_module.Loss(**kwargs['loss'].get('args', {}))
     return loss
 

@@ -6,8 +6,8 @@ def train(model, epoch, optimizer, trainer_loader, loss_function, device, **kwar
     for batch_idx, (data, _) in enumerate(trainer_loader):
         data = data.to(device)
         optimizer.zero_grad()
-        recon_batch, mu, logvar = model(data)
-        loss = loss_function(recon_batch, data, mu, logvar)
+        model_out = model(data)
+        loss = loss_function(*((data,)+model_out))
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
