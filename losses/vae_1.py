@@ -6,7 +6,7 @@ from losses import base
 
 class Loss(base.VaeLossBase):
     def __init__(self, *args, **kwargs):
-            super(Loss, self).__init__()
+        super(Loss, self).__init__()
 
     # Reconstruction + KL divergence losses summed over all elements and batch
     def __call__(self, *args, **kwargs):

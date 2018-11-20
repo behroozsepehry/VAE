@@ -13,6 +13,10 @@ if __name__ == '__main__':
     with open(args.conf_path, 'rb') as f:
         kwargs = yaml.load(f)
 
+        seed = kwargs.get('seed')
+        if seed is not None:
+            torch.manual_seed(seed)
+
         device_name = kwargs['Device']['name']
         device = torch.device(device_name)
 
