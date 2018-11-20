@@ -24,7 +24,10 @@ class Model(base.VaeModelBase):
     def decode(self, *args, **kwargs):
         assert len(args) == 1
         z, = tuple(args)
-        z2 = torch.sigmoid(self.fc1(z))
+        if self.training:
+            z2 = torch.sigmoid(self.fc1(z))
+        else:
+            z2 = (torch.sign(self.fc1(z)) + 1.)/2.
         h2 = F.relu(self.fc2(z2))
         return self.model_1.decode(h2) + (z2,)
 
