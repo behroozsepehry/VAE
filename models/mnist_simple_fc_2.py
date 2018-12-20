@@ -2,15 +2,16 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from models import base, mnist_simple_fc_1
+from models import base, mnist_simple_fc_normal_1
 
 
 class Model(base.VaeModelBase):
     def __init__(self, **kwargs):
+        raise NotImplementedError
         super(Model, self).__init__()
         self.z_dim = kwargs['z_dim']
         self.z2_dim = kwargs['z2_dim']
-        self.model_1 = mnist_simple_fc_1.Model(**kwargs)
+        self.model_1 = mnist_simple_fc_normal_1.Model(**kwargs)
 
         self.fc1 = nn.Linear(self.z_dim, self.z2_dim)
         self.fc2 = nn.Linear(self.z2_dim, self.z_dim)

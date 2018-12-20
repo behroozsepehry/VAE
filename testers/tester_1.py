@@ -26,9 +26,9 @@ class Tester(base.TesterBase):
                 test_loss += loss(*((data,)+model_out)).item()
                 if i == 0:
                     n = min(data.size(0), 8)
-                    recon_batch, mu = model_out[0:2]
+                    x_mu = model_out[0]
                     comparison = torch.cat([data[:n],
-                                          recon_batch.view(data.size())[:n]])
+                                            x_mu.view(data.size())[:n]])
                     save_image(comparison.cpu(),
                                results_path + '/reconstruction_' + str(epoch) + '.png', nrow=n)
 
@@ -38,7 +38,6 @@ class Tester(base.TesterBase):
 
         batch_size = tester_loader.batch_size
         with torch.no_grad():
-            sample = torch.randn((batch_size, mu.size(1))).to(device)
-            sample = model.decode(sample)[0].cpu()
+            sample = model.sample(device, n_samples=batch_size).cpu()
             save_image(sample.view((batch_size,) + data.size()[1:]),
                        results_path + '/sample_' + str(epoch) + '.png')

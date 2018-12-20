@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 
@@ -14,8 +15,13 @@ class VaeModelBase(nn.Module):
         # the first output must be reconstruction
         raise NotImplementedError
 
-    def forward(self, *args, **kwargs):
-        # return tuple
-        # the first output must be reconstruction
-        # second output must be same dimension as z
+    def reparameterize(self, *args, **kwargs):
         raise NotImplementedError
+
+    def forward(self, *args, **kwargs):
+        assert len(args) == 1
+        x, = tuple(args)
+        z_params = self.encode(x)
+        z = self.reparameterize(*z_params)
+        x_params = self.decode(z)
+        return x_params + z_params
