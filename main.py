@@ -17,9 +17,8 @@ if __name__ == '__main__':
         if seed is not None:
             torch.manual_seed(seed)
 
-        device_name = kwargs['Device']['name']
-        device = torch.device(device_name)
 
+        device = mu.get_device(**kwargs)
         model = mu.get_model(**kwargs).to(device)
         trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
         optimizer = mu.get_optimizer(model, **kwargs)

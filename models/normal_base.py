@@ -24,7 +24,12 @@ class VaeModelNormalBase(base.VaeModelBase):
         z = torch.randn((n_samples, self.z_dim)).to(device)
         x_mu, _ = self.decode(z)
         sampling_iterations = kwargs.get('sampling_iterations', self.sampling_iterations)
-        for i in range(sampling_iterations):
+        assert hasattr(sampling_iterations, '__len__')
+        max_sampling_iterations = max(sampling_iterations)
+        x_mu_list = []
+        for i in range(1, max_sampling_iterations+1):
             z_mu, _ = self.encode(x_mu)
             x_mu, _ = self.decode(z_mu)
-        return x_mu
+            if i in sampling_iterations:
+                x_mu_list.append(x_mu)
+        return x_mu_list

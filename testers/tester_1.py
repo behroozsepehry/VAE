@@ -38,6 +38,11 @@ class Tester(base.TesterBase):
 
         batch_size = tester_loader.batch_size
         with torch.no_grad():
-            sample = model.sample(device, n_samples=batch_size).cpu()
-            save_image(sample.view((batch_size,) + data.size()[1:]),
-                       results_path + '/sample_' + str(epoch) + '.png')
+            sample = model.sample(device, n_samples=batch_size)
+            if type(sample) != list:
+                sample_list = [sample]
+            else:
+                sample_list = sample
+            for i, s in enumerate(sample_list):
+                save_image(s.cpu().view((batch_size,) + data.size()[1:]),
+                           results_path + '/sample_' + str(epoch) + '_' + str(i+1) + '.png')

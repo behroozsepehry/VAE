@@ -4,10 +4,10 @@
 
   "Model":
     {
-      "name": "mnist_cnn_normal_1",
+      "name": "mnist_simple_fc_normal_1",
       "z_dim": 20,
       "z2_dim": 200,
-      "sampling_iterations": 100,
+      "sampling_iterations": [1, 10, 100],
     },
 
   "Device":

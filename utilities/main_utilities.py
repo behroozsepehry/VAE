@@ -49,6 +49,18 @@ def get_loss(**kwargs):
     return get_instance('losses/', 'Loss', **kwargs)
 
 
+def get_device(**kwargs):
+    device_name = kwargs['Device']['name']
+    if torch.cuda.is_available():
+        device = torch.device(device_name)
+    else:
+        device_name_2 = 'cpu'
+        device = torch.device(device_name_2)
+        if device_name_2 != device_name:
+            print('Warning: device \'%s\' not available, using device \'%s\' instead'% (device_name, device_name_2))
+    return device
+
+
 def get_logger(**kwargs):
     if kwargs['Logger']['name'] == 'tensorboard':
         from tensorboardX import SummaryWriter

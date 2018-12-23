@@ -10,22 +10,25 @@ class Model(normal_base.VaeModelNormalBase):
         super(Model, self).__init__(**kwargs)
 
         self.conv = nn.Sequential(
-            nn.Conv2d(1, 16, 3, stride=1, padding=0),  # b, 16, 10, 10
+            nn.Conv2d(1, 16, 3, stride=1, padding=0),
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),  # b, 16, 5, 5
-            nn.Conv2d(16, 32, 3, stride=1, padding=0),  # b, 8, 3, 3
+            nn.MaxPool2d(2, stride=1),
+            nn.Conv2d(16, 32, 3, stride=1, padding=0),
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),  # b, 8, 2, 2
-            nn.Conv2d(32, 32, 3, stride=1, padding=0),  # b, 8, 3, 3
+            nn.MaxPool2d(2, stride=1),
+            nn.Conv2d(32, 32, 3, stride=1, padding=0),
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1), # b, 8, 2, 2
-            nn.Conv2d(32, 16, 3, stride=1, padding=0),  # b, 8, 3, 3
+            nn.MaxPool2d(2, stride=1),
+            nn.Conv2d(32, 32, 3, stride=1, padding=0),
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1)  # b
+            nn.MaxPool2d(2, stride=1),
+            nn.Conv2d(32, 16, 3, stride=1, padding=0),
+            nn.ReLU(True),
+            nn.MaxPool2d(2, stride=1),
         )
 
-        self.fc11 = nn.Linear(16 * 16 * 16, self.z_dim)
-        self.fc12 = nn.Linear(16 * 16 * 16, self.z_dim)
+        self.fc11 = nn.Linear(16 * 13 * 13, self.z_dim)
+        self.fc12 = nn.Linear(16 * 13 * 13, self.z_dim)
 
         self.fc2 = nn.Sequential(nn.Linear(self.z_dim, 7 * 7 * 32),
                                  nn.ReLU(True),
