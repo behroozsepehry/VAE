@@ -1,0 +1,8 @@
+files/
+.idea/
+*.DS_Store/
+*.pyc
+
+
+losses/.DS_Store
+.DS_Store
