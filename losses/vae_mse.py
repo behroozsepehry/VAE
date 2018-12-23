@@ -15,7 +15,7 @@ class Loss(base.VaeLossBase):
         assert len(args) == 5
         x, x_mu, x_logvar, z_mu, z_logvar = tuple(args)
         mse = 0.5 * torch.sum(x_logvar.exp() + (((x_mu - x.view(x_mu.size())).pow(2))/(x_logvar.exp())))
-        print(x_logvar.min(), x_logvar.mean())
+        # print(x_logvar.min(), x_logvar.mean())
         # see Appendix B from VAE paper:
         # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
         # https://arxiv.org/abs/1312.6114

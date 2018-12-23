@@ -1,6 +1,7 @@
 import torch
 from torch import optim
 from torchvision import datasets, transforms
+from tensorboardX import SummaryWriter
 
 from utilities import general_utilities
 
@@ -26,7 +27,6 @@ def get_optimizer(model_, **kwargs):
 def get_dataloader(**kwargs):
     dataset_path = kwargs['Dataloader']['path']
     dataset_name = kwargs['Dataloader']['name']
-
     dataset_constructor = getattr(datasets, dataset_name)
     trainer_loader = torch.utils.data.DataLoader(
         dataset_constructor(dataset_path, train=True, download=True,  transform=transforms.ToTensor()),
@@ -48,3 +48,11 @@ def get_tester(**kwargs):
 
 def get_loss(**kwargs):
     return get_instance('losses/', 'Loss', **kwargs)
+
+
+def get_logger(**kwargs):
+    if kwargs['Logger']['name'] == 'tensorboard':
+        logger = SummaryWriter(**kwargs['Logger']['args'])
+    else:
+        raise NotImplementedError
+    return logger

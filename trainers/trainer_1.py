@@ -6,8 +6,8 @@ class Trainer(base.TrainerBase):
         super(Trainer, self).__init__()
 
     def __call__(self, *args, **kwargs):
-        assert len(args) == 6
-        model, epoch, optimizer, trainer_loader, loss_function, device = tuple(args)
+        assert len(args) == 7
+        model, epoch, optimizer, trainer_loader, loss_function, device, logger = tuple(args)
         log_interval = kwargs.get('log_interval', 1)
         verbose = kwargs.get('verbose', False)
         model.train()
@@ -27,7 +27,10 @@ class Trainer(base.TrainerBase):
                         100. * batch_idx / len(trainer_loader),
                         loss.item() / len(data)))
 
+        epoch_train_loss = train_loss / len(trainer_loader.dataset)
         if verbose:
             print('====> Epoch: {} Average loss: {:.4f}'.format(
-                epoch, train_loss / len(trainer_loader.dataset)))
+                epoch, epoch_train_loss))
+        if logger:
+            logger.add_scalar('data/epoch_train_loss', epoch_train_loss, epoch)
 

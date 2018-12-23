@@ -7,12 +7,12 @@
       "name": "mnist_cnn_normal_1",
       "z_dim": 20,
       "z2_dim": 200,
-      "sampling_iterations": 100,
+      "sampling_iterations": 10,
     },
 
   "Device":
     {
-      "name": "cuda",
+      "name": "cpu",
     },
 
   "Optimizer":
@@ -38,7 +38,7 @@
   "Trainer":
     {
       "name": "trainer_1",
-      "n_epochs": 100,
+      "n_epochs": 3,
       "verbose": True,
       "log_interval": 10,
     },
@@ -46,7 +46,7 @@
   "Tester":
     {
       "name": "tester_1",
-      "path": "files/results/MNIST/vae_mse_cnn_repeat_100",
+      "path": "files/results/MNIST/vae_mse_cnn_repeat_10",
       "verbose": True,
     },
 
@@ -55,4 +55,13 @@
       "name": "vae_mse",
       "l1_weight": 1.0,
     },
+
+  "Logger":
+    {
+        "name": "tensorboard",
+        "args":
+          {
+              "log_dir": "files/results/MNIST/vae_mse_cnn_repeat_10/logs/exp-1",
+          }
+    }
 }

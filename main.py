@@ -26,9 +26,12 @@ if __name__ == '__main__':
         trainer = mu.get_trainer(**kwargs)
         tester = mu.get_tester(**kwargs)
         loss = mu.get_loss(**kwargs)
+        logger = mu.get_logger(**kwargs)
 
         n_epochs = kwargs['Trainer']['n_epochs']
         for epoch in range(1, n_epochs + 1):
-            trainer(model, epoch, optimizer, trainer_loader, loss, device, **kwargs['Trainer'])
-            tester(model, epoch, tester_loader, loss, device, **kwargs['Tester'])
+            trainer(model, epoch, optimizer, trainer_loader, loss, device, logger, **kwargs['Trainer'])
+            tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
 
+        if logger:
+            logger.close()

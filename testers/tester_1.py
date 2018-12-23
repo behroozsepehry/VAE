@@ -9,8 +9,8 @@ class Tester(base.TesterBase):
             super(Tester, self).__init__()
 
     def __call__(self, *args, **kwargs):
-        assert len(args) == 5
-        model, epoch, tester_loader, loss, device = tuple(args)
+        assert len(args) == 6
+        model, epoch, tester_loader, loss, device, logger = tuple(args)
         verbose = kwargs.get('verbose', False)
         results_path = kwargs.get('path')
         if not results_path:
