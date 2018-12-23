@@ -27,9 +27,9 @@ class VaeModelNormalBase(base.VaeModelBase):
         assert hasattr(sampling_iterations, '__len__')
         max_sampling_iterations = max(sampling_iterations)
         x_mu_list = []
-        for i in range(1, max_sampling_iterations+1):
-            z_mu, _ = self.encode(x_mu)
-            x_mu, _ = self.decode(z_mu)
+        for i in range(0, max_sampling_iterations+1):
             if i in sampling_iterations:
                 x_mu_list.append(x_mu)
+            z_mu, _ = self.encode(x_mu)
+            x_mu, _ = self.decode(z_mu)
         return x_mu_list
