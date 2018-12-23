@@ -36,6 +36,9 @@ class Tester(base.TesterBase):
             test_loss /= len(tester_loader.dataset)
             print('====> Test set loss: {:.4f}'.format(test_loss))
 
+        if logger:
+            logger.add_scalar('data/epoch_test_loss', test_loss, epoch)
+
         batch_size = tester_loader.batch_size
         with torch.no_grad():
             sample = model.sample(device, n_samples=batch_size)
