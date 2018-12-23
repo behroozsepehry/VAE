@@ -17,7 +17,6 @@ if __name__ == '__main__':
         if seed is not None:
             torch.manual_seed(seed)
 
-
         device = mu.get_device(**kwargs)
         model = mu.get_model(**kwargs).to(device)
         trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
@@ -26,6 +25,9 @@ if __name__ == '__main__':
         tester = mu.get_tester(**kwargs)
         loss = mu.get_loss(**kwargs)
         logger = mu.get_logger(**kwargs)
+
+        if logger:
+            logger.add_text('config/config', str(kwargs))
 
         n_epochs = kwargs['Trainer']['n_epochs']
         for epoch in range(1, n_epochs + 1):
