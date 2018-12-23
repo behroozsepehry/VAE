@@ -1,7 +1,6 @@
 import torch
 from torch import optim
 from torchvision import datasets, transforms
-from tensorboardX import SummaryWriter
 
 from utilities import general_utilities
 
@@ -52,7 +51,10 @@ def get_loss(**kwargs):
 
 def get_logger(**kwargs):
     if kwargs['Logger']['name'] == 'tensorboard':
+        from tensorboardX import SummaryWriter
         logger = SummaryWriter(**kwargs['Logger']['args'])
+    elif not kwargs['Logger']['name']:
+        logger = None
     else:
         raise NotImplementedError
     return logger

@@ -12,17 +12,20 @@ class Model(normal_base.VaeModelNormalBase):
         self.conv = nn.Sequential(
             nn.Conv2d(1, 16, 3, stride=1, padding=0),  # b, 16, 10, 10
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=2),  # b, 16, 5, 5
+            nn.MaxPool2d(2, stride=1),  # b, 16, 5, 5
             nn.Conv2d(16, 32, 3, stride=1, padding=0),  # b, 8, 3, 3
             nn.ReLU(True),
             nn.MaxPool2d(2, stride=1),  # b, 8, 2, 2
+            nn.Conv2d(32, 32, 3, stride=1, padding=0),  # b, 8, 3, 3
+            nn.ReLU(True),
+            nn.MaxPool2d(2, stride=1), # b, 8, 2, 2
             nn.Conv2d(32, 16, 3, stride=1, padding=0),  # b, 8, 3, 3
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1)  # b, 8, 2, 2
+            nn.MaxPool2d(2, stride=1)  # b
         )
 
-        self.fc11 = nn.Linear(16 * 7 * 7, self.z_dim)
-        self.fc12 = nn.Linear(16 * 7 * 7, self.z_dim)
+        self.fc11 = nn.Linear(16 * 16 * 16, self.z_dim)
+        self.fc12 = nn.Linear(16 * 16 * 16, self.z_dim)
 
         self.fc2 = nn.Sequential(nn.Linear(self.z_dim, 7 * 7 * 32),
                                  nn.ReLU(True),
