@@ -49,7 +49,12 @@ class Tester(base.TesterBase):
                 sample_x_list = sample_x
                 sample_z_list = sample_z
             for i, s in enumerate(sample_x_list):
-                save_image(s.cpu().view((batch_size,) + data.size()[1:]),
+                x_images = s.cpu().view((batch_size,) + data.size()[1:])
+                save_image(x_images,
                            results_path + '/sample_' + str(epoch) + '_' + str(i+1) + '.png')
                 if logger:
-                    logger.add_embedding(sample_z_list[i].cpu(), global_step=epoch, tag=('data/z_%s'%(i)))
+                    logger.add_embedding(sample_z_list[i].cpu(),
+                                         tag=('data/z_%s_%s'%(epoch, i)),
+                                         label_img=x_images)
+
+        return test_loss

@@ -6,8 +6,8 @@ from models import normal_base
 
 
 class Model(normal_base.VaeModelNormalBase):
-    def __init__(self, **kwargs):
-        super(Model, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(Model, self).__init__(*args, **kwargs)
 
         self.fc1 = nn.Linear(784, 400)
         self.fc21 = nn.Linear(400, self.z_dim)

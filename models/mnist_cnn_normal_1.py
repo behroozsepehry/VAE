@@ -6,8 +6,8 @@ from models import normal_base
 
 
 class Model(normal_base.VaeModelNormalBase):
-    def __init__(self, **kwargs):
-        super(Model, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(Model, self).__init__(*args, **kwargs)
 
         self.conv = nn.Sequential(
             nn.Conv2d(1, 16, 3, stride=1, padding=0),

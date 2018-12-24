@@ -1,9 +1,53 @@
 import argparse
 import yaml
+import numpy as np
 
 import torch
 
 from utilities import main_utilities as mu
+
+
+def construct_objects(**kwargs):
+    seed = kwargs.get('seed')
+    if seed is not None:
+        torch.manual_seed(seed)
+
+    device = mu.get_device(**kwargs)
+    model = mu.get_model(**kwargs).to(device)
+    trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
+    optimizer = mu.get_optimizer(model, **kwargs)
+    trainer = mu.get_trainer(**kwargs)
+    tester = mu.get_tester(**kwargs)
+    loss = mu.get_loss(**kwargs)
+    logger = mu.get_logger(**kwargs)
+
+    if logger:
+        logger.add_text('config/config', str(kwargs))
+
+    return device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger
+
+
+def train(*args, **kwargs):
+    assert len(args) == 9
+    device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = args
+    if trainer:
+        n_epochs = kwargs['Trainer']['n_epochs']
+        best_train_loss = np.inf
+        for epoch in range(1, n_epochs + 1):
+            train_loss = trainer(model, epoch, optimizer, trainer_loader, loss, device, logger, **kwargs['Trainer'])
+            if train_loss < best_train_loss:
+                best_train_loss = train_loss
+                model.save(model.save_path, save_data=dict(epoch=epoch))
+            if tester:
+                test_loss = tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
+
+
+def test(*args, **kwargs):
+    assert len(args) == 9
+    device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = args
+    if tester:
+        test_loss = tester(model, 0, tester_loader, loss, device, logger, **kwargs['Tester'])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
@@ -12,27 +56,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:
         kwargs = yaml.load(f)
-
-        seed = kwargs.get('seed')
-        if seed is not None:
-            torch.manual_seed(seed)
-
-        device = mu.get_device(**kwargs)
-        model = mu.get_model(**kwargs).to(device)
-        trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
-        optimizer = mu.get_optimizer(model, **kwargs)
-        trainer = mu.get_trainer(**kwargs)
-        tester = mu.get_tester(**kwargs)
-        loss = mu.get_loss(**kwargs)
-        logger = mu.get_logger(**kwargs)
-
-        if logger:
-            logger.add_text('config/config', str(kwargs))
-
-        n_epochs = kwargs['Trainer']['n_epochs']
-        for epoch in range(1, n_epochs + 1):
-            trainer(model, epoch, optimizer, trainer_loader, loss, device, logger, **kwargs['Trainer'])
-            tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
-
+        objects = construct_objects(**kwargs)
+        device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = objects
+        train(*objects, **kwargs)
+        test(*objects, **kwargs)
         if logger:
             logger.close()

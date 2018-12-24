@@ -6,9 +6,9 @@ from models import base, mnist_simple_fc_normal_1
 
 
 class Model(base.VaeModelBase):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         raise NotImplementedError
-        super(Model, self).__init__()
+        super(Model, self).__init__(*args, **kwargs)
         self.z_dim = kwargs['z_dim']
         self.z2_dim = kwargs['z2_dim']
         self.model_1 = mnist_simple_fc_normal_1.Model(**kwargs)

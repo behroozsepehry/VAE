@@ -7,8 +7,11 @@ from utilities import general_utilities
 
 def get_instance(folder, instance_type, **kwargs):
     instance_filename = kwargs[instance_type]['name']
-    module = general_utilities.import_from_path(folder+instance_filename+'.py')
-    instance = getattr(module, instance_type)(**kwargs[instance_type])
+    if not instance_filename:
+        instance = None
+    else:
+        module = general_utilities.import_from_path(folder+instance_filename+'.py')
+        instance = getattr(module, instance_type)(**kwargs[instance_type])
     return instance
 
 

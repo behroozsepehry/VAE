@@ -34,3 +34,5 @@ class Trainer(base.TrainerBase):
         if logger:
             logger.add_scalar('data/epoch_train_loss', epoch_train_loss, epoch)
 
+        return epoch_train_loss
+

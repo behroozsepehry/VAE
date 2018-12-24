@@ -6,8 +6,8 @@ from models import base
 
 
 class VaeModelNormalBase(base.VaeModelBase):
-    def __init__(self, **kwargs):
-        super(VaeModelNormalBase, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(VaeModelNormalBase, self).__init__(*args, **kwargs)
         z_dim = kwargs['z_dim']
         self.z_dim = z_dim
         self.sampling_iterations = kwargs.get('sampling_iterations', 0)
