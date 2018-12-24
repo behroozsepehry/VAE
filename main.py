@@ -13,7 +13,9 @@ def construct_objects(**kwargs):
         torch.manual_seed(seed)
 
     device = mu.get_device(**kwargs)
-    model = mu.get_model(**kwargs).to(device)
+    model = mu.get_model(**kwargs)
+    model.load(model.load_path, map_location=device)
+    model = model.to(device)
     trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
     optimizer = mu.get_optimizer(model, **kwargs)
     trainer = mu.get_trainer(**kwargs)

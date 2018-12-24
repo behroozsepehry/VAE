@@ -7,11 +7,10 @@ class VaeModelBase(nn.Module):
         super(VaeModelBase, self).__init__()
         self.save_path = kwargs.get('save_path')
         self.load_path = kwargs.get('load_path')
-        self.load(self.load_path)
 
     def load(self, path, *args, **kwargs):
         if path:
-            data = torch.load(path)
+            data = torch.load(path, map_location=kwargs.get('map_location'))
             self.load_state_dict(data['state_dict'])
 
     def save(self, path, *args, **kwargs):
