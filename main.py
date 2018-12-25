@@ -44,7 +44,7 @@ def train(*args, **kwargs):
                 test_loss = tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
 
     if not (trainer and n_epochs):
-        test_loss = tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
+        test_loss = tester(model, 0, tester_loader, loss, device, logger, **kwargs['Tester'])
 
     model.load(model.save_path)
     sampling_iterations_train_losses = model.get_sampling_iterations_loss(trainer_loader, loss, device)

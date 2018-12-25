@@ -40,7 +40,7 @@
   "Trainer":
     {
       "name": "trainer_1",
-      "n_epochs": 1,
+      "n_epochs": 0,
       "verbose": True,
       "log_interval": 20,
     },
