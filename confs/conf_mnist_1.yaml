@@ -7,7 +7,7 @@
       "name": "mnist_simple_fc_normal_1",
       "z_dim": 20,
       "z2_dim": 200,
-      "sampling_iterations": [0, 1, 10],
+      "sampling_iterations": [0, 1, 2, 3],
       "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
       "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
     },

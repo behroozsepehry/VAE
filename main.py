@@ -47,9 +47,10 @@ def train(*args, **kwargs):
         test_loss = tester(model, 0, tester_loader, loss, device, logger, **kwargs['Tester'])
 
     model.load(model.save_path)
-    sampling_iterations_train_losses = model.get_sampling_iterations_loss(trainer_loader, loss, device)
-    for i, l in enumerate(sampling_iterations_train_losses):
-        logger.add_scalar('data/sampling_iterations_train_losses', l, i)
+    for data_loader, data_name in [(trainer_loader, 'train'), (tester_loader, 'test')]:
+        sampling_iterations_dataset_losses = model.get_sampling_iterations_loss(data_loader, loss, device)
+        for i, l in enumerate(sampling_iterations_dataset_losses):
+            logger.add_scalar('data/sampling_iterations_%s_losses' % data_name, l, i)
 
 
 if __name__ == '__main__':
