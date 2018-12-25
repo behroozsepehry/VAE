@@ -32,8 +32,8 @@ def construct_objects(**kwargs):
 def train(*args, **kwargs):
     assert len(args) == 9
     device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = args
+    n_epochs = kwargs['Trainer']['n_epochs']
     if trainer:
-        n_epochs = kwargs['Trainer']['n_epochs']
         best_train_loss = np.inf
         for epoch in range(1, n_epochs + 1):
             train_loss = trainer(model, epoch, optimizer, trainer_loader, loss, device, logger, **kwargs['Trainer'])
@@ -43,12 +43,13 @@ def train(*args, **kwargs):
             if tester:
                 test_loss = tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
 
+    if not (trainer and n_epochs):
+        test_loss = tester(model, epoch, tester_loader, loss, device, logger, **kwargs['Tester'])
 
-def test(*args, **kwargs):
-    assert len(args) == 9
-    device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = args
-    if tester:
-        test_loss = tester(model, 0, tester_loader, loss, device, logger, **kwargs['Tester'])
+    model.load(model.save_path)
+    sampling_iterations_train_losses = model.get_sampling_iterations_loss(trainer_loader, loss, device)
+    for i, l in enumerate(sampling_iterations_train_losses):
+        logger.add_scalar('data/sampling_iterations_train_losses', l, i)
 
 
 if __name__ == '__main__':
@@ -61,6 +62,5 @@ if __name__ == '__main__':
         objects = construct_objects(**kwargs)
         device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = objects
         train(*objects, **kwargs)
-        test(*objects, **kwargs)
         if logger:
             logger.close()
