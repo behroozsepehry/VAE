@@ -36,7 +36,7 @@ def train(*args, **kwargs):
     if trainer:
         best_train_loss = np.inf
         for epoch in range(1, n_epochs + 1):
-            train_loss = trainer(model, epoch, optimizer, trainer_loader, loss, device, logger, **kwargs['Trainer'])
+            train_loss = trainer(model, epoch, [optimizer,], trainer_loader, [loss,], device, logger, **kwargs['Trainer'])
             if train_loss < best_train_loss:
                 best_train_loss = train_loss
                 model.save(model.save_path, save_data=dict(epoch=epoch))

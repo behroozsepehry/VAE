@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from models import base, mnist_simple_fc_normal_1
+from models.vae import mnist_simple_fc_normal_1, base
 
 
 class Model(base.VaeModelBase):

@@ -1,3 +1,5 @@
+import numpy as np
+
 from trainers import base
 
 
@@ -7,32 +9,41 @@ class Trainer(base.TrainerBase):
 
     def __call__(self, *args, **kwargs):
         assert len(args) == 7
-        model, epoch, optimizer, trainer_loader, loss_function, device, logger = tuple(args)
+        model, epoch, optimizers, trainer_loader, loss_functions, device, logger = tuple(args)
+        assert hasattr(optimizers, '__len__') # check if we have list, tuple, etc of optimizers
+        assert hasattr(loss_functions, '__len__') # check if we have list, tuple, etc of loss_functions
+        assert len(optimizers) == len(loss_functions)
+        nol = len(optimizers)
+
         log_interval = kwargs.get('log_interval', 1)
         verbose = kwargs.get('verbose', False)
         model.train()
-        train_loss = 0
+        train_losses = np.zeros(nol)
         for batch_idx, (data, _) in enumerate(trainer_loader):
             data = data.to(device)
-            optimizer.zero_grad()
             model_out = model(data)
-            loss = loss_function(*((data,)+model_out))
-            loss.backward()
-            train_loss += loss.item()
-            optimizer.step()
+            train_batch_losses = np.zeros(nol)
+            for i in range(nol):
+                optimizers[i].zero_grad()
+                loss = loss_functions[i](*((data,) + model_out))
+                loss.backward()
+                train_batch_losses[i] += loss.item()
+                optimizers[i].step()
+            train_losses += train_batch_losses
             if verbose:
                 if batch_idx % log_interval == 0:
-                    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                    print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {}'.format(
                         epoch, batch_idx * len(data), len(trainer_loader.dataset),
                         100. * batch_idx / len(trainer_loader),
-                        loss.item() / len(data)))
+                        train_batch_losses / len(data)))
 
-        epoch_train_loss = train_loss / len(trainer_loader.dataset)
+        epoch_train_losses = train_losses / len(trainer_loader.dataset)
         if verbose:
-            print('====> Epoch: {} Average loss: {:.4f}'.format(
-                epoch, epoch_train_loss))
+            print('====> Epoch: {} Average loss: {}'.format(
+                epoch, epoch_train_losses))
         if logger:
-            logger.add_scalar('data/epoch_train_loss', epoch_train_loss, epoch)
+            for i, l in enumerate(epoch_train_losses):
+                logger.add_scalar('data/epoch_train_loss_%s' % i, l, epoch)
 
-        return epoch_train_loss
+        return epoch_train_losses
 

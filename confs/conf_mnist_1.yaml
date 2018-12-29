@@ -4,7 +4,7 @@
 
   "Model":
     {
-      "name": "mnist_simple_fc_normal_1",
+      "name": "vae/mnist_simple_fc_normal_1",
       "z_dim": 20,
       "z2_dim": 200,
       "sampling_iterations": [0, 1, 2, 3],
@@ -40,7 +40,7 @@
   "Trainer":
     {
       "name": "trainer_1",
-      "n_epochs": 0,
+      "n_epochs": 1,
       "verbose": True,
       "log_interval": 20,
     },

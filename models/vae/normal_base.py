@@ -1,10 +1,8 @@
 import numpy as np
 
 import torch
-from torch import nn
-from torch.nn import functional as F
 
-from models import base
+from models.vae import base
 
 
 class VaeModelNormalBase(base.VaeModelBase):
