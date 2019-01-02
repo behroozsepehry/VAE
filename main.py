@@ -13,25 +13,30 @@ def construct_objects(**kwargs):
         torch.manual_seed(seed)
 
     device = mu.get_device(**kwargs)
-    model = mu.get_model(**kwargs)
+    model, _ = mu.get_models(**kwargs)
     model.load(model.load_path, map_location=device)
     model = model.to(device)
     trainer_loader, tester_loader = mu.get_dataloader(**kwargs)
-    optimizer = mu.get_optimizer(model, **kwargs)
-    trainer = mu.get_trainer(**kwargs)
-    tester = mu.get_tester(**kwargs)
-    loss = mu.get_loss(**kwargs)
+    if 'gan' in model.name:
+        optimizers = [mu.get_optimizer(model.discriminator, **kwargs),
+                      mu.get_optimizer(model.generator, **kwargs),]
+    else:
+        optimizers = [mu.get_optimizer(model, **kwargs),]
+    trainer, _ = mu.get_trainers(**kwargs)
+    tester, _ = mu.get_testers(**kwargs)
+    losses = mu.get_losses(**kwargs)
+    assert len(losses) == len(optimizers)
     logger = mu.get_logger(**kwargs)
 
     if logger:
         logger.add_text('config/config', str(kwargs))
 
-    return device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger
+    return device, model, trainer_loader, tester_loader, optimizers, trainer, tester, losses, logger
 
 
 def train(*args, **kwargs):
     assert len(args) == 9
-    device, model, trainer_loader, tester_loader, optimizer, trainer, tester, loss, logger = args
+    device, model, trainer_loader, tester_loader, optimizers, trainer, tester, losses, logger = args
     n_epochs = kwargs['Trainer']['n_epochs']
     if trainer:
         best_train_loss = np.inf
@@ -53,7 +58,7 @@ def train(*args, **kwargs):
             logger.add_scalar('data/sampling_iterations_%s_losses' % data_name, l, i)
 
 
-if __name__ == '__main__':
+def  main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
     parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_1.yaml', metavar='N',
                         help='configuration file path')
@@ -65,3 +70,7 @@ if __name__ == '__main__':
         train(*objects, **kwargs)
         if logger:
             logger.close()
+
+
+if __name__ == '__main__':
+    main()

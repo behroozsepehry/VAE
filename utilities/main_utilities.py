@@ -5,18 +5,21 @@ from torchvision import datasets, transforms
 from utilities import general_utilities
 
 
-def get_instance(folder, instance_type, **kwargs):
-    instance_filename = kwargs[instance_type]['name']
-    if not instance_filename:
-        instance = None
-    else:
-        module = general_utilities.import_from_path(folder+instance_filename+'.py')
-        instance = getattr(module, instance_type)(**kwargs[instance_type])
-    return instance
+def get_instances(folder, instance_type, **kwargs):
+    instance_list = []
+    for i, kwargs_instance in enumerate(kwargs[instance_type]):
+        instance_filename = kwargs_instance['name']
+        if not instance_filename:
+            instance = None
+        else:
+            module = general_utilities.import_from_path(folder+instance_filename+'.py')
+            instance = getattr(module, instance_type)(**kwargs_instance)
+        instance_list.append(instance)
+    return instance_list
 
 
-def get_model(**kwargs):
-    return get_instance('models/', 'Model', **kwargs)
+def get_models(**kwargs):
+    return get_instances('models/', 'Model', **kwargs)
 
 
 def get_optimizer(model_, **kwargs):
@@ -40,16 +43,16 @@ def get_dataloader(**kwargs):
     return trainer_loader, tester_loader
 
 
-def get_trainer(**kwargs):
-    return get_instance('trainers/', 'Trainer', **kwargs)
+def get_trainers(**kwargs):
+    return get_instances('trainers/', 'Trainer', **kwargs)
 
 
-def get_tester(**kwargs):
-    return get_instance('testers/', 'Tester', **kwargs)
+def get_testers(**kwargs):
+    return get_instances('testers/', 'Tester', **kwargs)
 
 
-def get_loss(**kwargs):
-    return get_instance('losses/', 'Loss', **kwargs)
+def get_losses(**kwargs):
+    return get_instances('losses/', 'Loss', **kwargs)
 
 
 def get_device(**kwargs):

@@ -10,8 +10,8 @@ class Trainer(base.TrainerBase):
     def __call__(self, *args, **kwargs):
         assert len(args) == 7
         model, epoch, optimizers, trainer_loader, loss_functions, device, logger = tuple(args)
-        assert hasattr(optimizers, '__len__') # check if we have list, tuple, etc of optimizers
-        assert hasattr(loss_functions, '__len__') # check if we have list, tuple, etc of loss_functions
+        assert hasattr(optimizers, '__len__')  # check if we have list, tuple, etc of optimizers
+        assert hasattr(loss_functions, '__len__')  # check if we have list, tuple, etc of loss_functions
         assert len(optimizers) == len(loss_functions)
         nol = len(optimizers)
 

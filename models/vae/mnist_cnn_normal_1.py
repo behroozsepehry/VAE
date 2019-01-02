@@ -34,19 +34,19 @@ class Model(normal_base.VaeModelNormalBase):
                                  )
 
         self.deconv = nn.Sequential(
-            nn.ConvTranspose2d(32, 32, 3, stride=1),  # b, 16, 5, 5
+            nn.ConvTranspose2d(32, 32, 3, stride=1),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, 32, 3, stride=1),  # b, 8, 15, 15
+            nn.ConvTranspose2d(32, 32, 3, stride=1),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, 32, 3, stride=1),  # b, 16, 5, 5
+            nn.ConvTranspose2d(32, 32, 3, stride=1),
             nn.ReLU(True),
-            nn.ConvTranspose2d(32, 16, 3, stride=1),  # b, 8, 15, 15
+            nn.ConvTranspose2d(32, 16, 3, stride=1),
             nn.ReLU(True),
         )
-        self.deconv_mu = nn.Sequential(nn.ConvTranspose2d(16, 1, 4, stride=2, padding=2),  # b, 1, 28, 28
+        self.deconv_mu = nn.Sequential(nn.ConvTranspose2d(16, 1, 4, stride=2, padding=2),
             nn.Sigmoid(),
         )
-        self.deconv_logvar = nn.Sequential(nn.ConvTranspose2d(16, 1, 4, stride=2, padding=2),  # b, 1, 28, 28
+        self.deconv_logvar = nn.Sequential(nn.ConvTranspose2d(16, 1, 4, stride=2, padding=2),
         )
 
     def encode(self, *args, **kwargs):

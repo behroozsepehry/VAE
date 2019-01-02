@@ -3,28 +3,34 @@
   "seed": 0,
 
   "Model":
-    {
-      "name": "vae/mnist_simple_fc_normal_1",
-      "z_dim": 20,
-      "z2_dim": 200,
-      "sampling_iterations": [0, 1, 2, 3],
-      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
-      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
-    },
+    [
+        {
+            "name": "vae/mnist_cnn_normal_1",
+            "z_dim": 20,
+            "z2_dim": 200,
+            "sampling_iterations": [0, 1, 2, 3],
+          #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
+          #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
+        },
+    ],
+
 
   "Device":
     {
-      "name": "cuda",
+        "name": "cuda",
     },
 
   "Optimizer":
-    {
-      "name": "Adam",
-      "args":
+    [
         {
-          "lr": 1.0e-3,
+            "name": "Adam",
+            "args":
+              {
+                  "lr": 1.0e-3,
+              },
         },
-    },
+    ],
+
 
   "Dataloader":
     {
@@ -38,25 +44,31 @@
     },
 
   "Trainer":
-    {
-      "name": "trainer_1",
-      "n_epochs": 1,
-      "verbose": True,
-      "log_interval": 20,
-    },
+    [
+        {
+            "name": "trainer_1",
+            "n_epochs": 1,
+            "verbose": True,
+            "log_interval": 20,
+        },
+    ],
 
   "Tester":
-    {
-      "name": "tester_1",
-      "path": "files/results/MNIST/vae_mse_fc_repeat_100",
-      "verbose": True,
-    },
+    [
+        {
+            "name": "tester_1",
+            "path": "files/results/MNIST/vae_mse_fc_repeat_100",
+            "verbose": True,
+        },
+    ],
 
   "Loss":
-    {
-      "name": "vae_mse",
-      "l1_weight": 1.0,
-    },
+    [
+        {
+            "name": "vae/mse",
+            "l1_weight": 1.0,
+        },
+    ],
 
   "Logger":
     {

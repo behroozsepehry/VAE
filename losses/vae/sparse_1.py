@@ -1,13 +1,11 @@
-import torch
-from torch.nn import functional as F
-
-from losses import base, vae_bce
+from losses import base
+from losses.vae import bce
 
 
-class Loss(base.VaeLossBase):
+class Loss(base.LossBase):
     def __init__(self, *args, **kwargs):
-        super(Loss, self).__init__()
-        self.vae1_loss = vae_bce.Loss(*args, **kwargs)
+        super(Loss, self).__init__(*args, **kwargs)
+        self.vae1_loss = bce.Loss(*args, **kwargs)
         self.l1_weight = kwargs.get('l1_weight', 1.0)
 
     # Reconstruction + KL divergence losses summed over all elements and batch
