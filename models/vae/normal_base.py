@@ -3,6 +3,7 @@ import numpy as np
 import torch
 
 from models.vae import base
+from utilities import sampler as smp
 
 
 class VaeModelNormalBase(base.VaeModelBase):
@@ -11,6 +12,7 @@ class VaeModelNormalBase(base.VaeModelBase):
         z_dim = kwargs['z_dim']
         self.z_dim = z_dim
         self.sampling_iterations = kwargs.get('sampling_iterations', [0])
+        self.z_generator = smp.Sampler(name='standard_normal')
 
     def reparameterize(self, *args, **kwargs):
         assert len(args) == 2
@@ -19,10 +21,11 @@ class VaeModelNormalBase(base.VaeModelBase):
         eps = torch.randn_like(std)
         return eps.mul(std).add_(mu)
 
-    def sample(self, device, *args, **kwargs):
+    def generate(self, device, *args, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
-        z_mu = torch.randn((n_samples, self.z_dim)).to(device)
-        return self.do_sampling_iterations(z_mu, device, *args, **kwargs)
+        z_mu = self.z_generator((n_samples, self.z_dim)).to(device)
+        x_samples = self.do_sampling_iterations(z_mu, device, *args, **kwargs)
+        return x_samples
 
     def do_sampling_iterations(self, z_mu, device, *args, **kwargs):
         sampling_iterations = kwargs.get('sampling_iterations', self.sampling_iterations)

@@ -3,7 +3,7 @@ import torch
 
 class Sampler(object):
     def __init__(self, *args, **kwargs):
-        self.name = kwargs.get('name', 'normal')
+        self.name = kwargs.get('name', 'standard_normal')
         self.device = kwargs.get('device')
         if self.name == 'standard_normal':
             self._sampler_func = lambda size: torch.randn(*size, device=self.device)

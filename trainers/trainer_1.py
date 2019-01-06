@@ -42,8 +42,8 @@ class Trainer(base.TrainerBase):
             print('====> Epoch: {} Average loss: {}'.format(
                 epoch, epoch_train_losses))
         if logger:
-            for i, l in enumerate(epoch_train_losses):
-                logger.add_scalar('data/epoch_train_loss_%s' % i, l, epoch)
+            for i, loss_ in enumerate(epoch_train_losses):
+                logger.add_scalar('data/epoch_train_loss_%s' % i, loss_, epoch)
 
         return epoch_train_losses
 

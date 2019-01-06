@@ -4,7 +4,7 @@ from losses.vae import bce
 
 class Loss(base.LossBase):
     def __init__(self, *args, **kwargs):
-        super(Loss, self).__init__(*args, **kwargs)
+        super(Loss, self).__init__()
         self.vae1_loss = bce.Loss(*args, **kwargs)
         self.l1_weight = kwargs.get('l1_weight', 1.0)
 

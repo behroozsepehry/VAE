@@ -15,7 +15,7 @@ class GanModelBase(models.base.ModelBase):
         n_samples, = tuple(args)
         z = self.z_generator((n_samples, self.z_dim))
         x = self.generator(z)
-        return x
+        return x, z
 
     def forward(self, *args, **kwargs):
         assert len(args) == 1

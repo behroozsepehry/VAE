@@ -21,15 +21,13 @@
     },
 
   "Optimizer":
-    [
-        {
-            "name": "Adam",
-            "args":
-              {
-                  "lr": 1.0e-3,
-              },
-        },
-    ],
+    {
+        "name": "Adam",
+        "args":
+          {
+              "lr": 1.0e-3,
+          },
+    },
 
 
   "Dataloader":
@@ -57,7 +55,7 @@
     [
         {
             "name": "tester_1",
-            "path": "files/results/MNIST/vae_mse_fc_repeat_100",
+            "path": "files/results/MNIST/vae_mse_fc_repeat_3",
             "verbose": True,
         },
     ],
@@ -75,7 +73,7 @@
         "name": "tensorboard",
         "args":
           {
-              "log_dir": "files/results/MNIST/vae_mse_fc_repeat_100/logs/exp-1",
+              "log_dir": "files/results/MNIST/vae_mse_fc_repeat_3/logs/exp-1",
           }
     }
 }

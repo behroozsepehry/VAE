@@ -6,7 +6,7 @@ from losses import base
 
 
 class Loss(base.LossBase):
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super(Loss, self).__init__(*args, **kwargs)
 
     # Reconstruction + KL divergence losses summed over all elements and batch
