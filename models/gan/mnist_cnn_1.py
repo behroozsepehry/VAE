@@ -7,25 +7,35 @@ class Model(base.GanModelBase):
     def __init__(self, *args, **kwargs):
         super(Model, self).__init__(*args, **kwargs)
 
-        self.discriminator = nn.Sequential(
-            nn.Conv2d(1, 16, 3, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),
-            nn.Conv2d(16, 32, 3, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),
-            nn.Conv2d(32, 32, 3, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),
-            nn.Conv2d(32, 32, 3, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),
-            nn.Conv2d(32, 16, 3, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, stride=1),
-            nn.Conv2d(16, 1, 13, stride=0, padding=0),
-            nn.Sigmoid(),
-        )
+        class Discriminator(nn.Module):
+            def __init__(self):
+                super(Discriminator, self).__init__()
+                self.conv = nn.Sequential(
+                    nn.Conv2d(1, 16, 3, stride=1, padding=0),
+                    nn.ReLU(True),
+                    nn.MaxPool2d(2, stride=1),
+                    nn.Conv2d(16, 32, 3, stride=1, padding=0),
+                    nn.ReLU(True),
+                    nn.MaxPool2d(2, stride=1),
+                    nn.Conv2d(32, 32, 3, stride=1, padding=0),
+                    nn.ReLU(True),
+                    nn.MaxPool2d(2, stride=1),
+                    nn.Conv2d(32, 32, 3, stride=1, padding=0),
+                    nn.ReLU(True),
+                    nn.MaxPool2d(2, stride=1),
+                    nn.Conv2d(32, 16, 3, stride=1, padding=0),
+                    nn.ReLU(True),
+                    nn.MaxPool2d(2, stride=1),
+                )
+                self.fc = nn.Sequential(
+                    nn.Linear(16 * 13 * 13, 1),
+                    nn.Sigmoid(),
+                )
+
+            def forward(self, x):
+                h = self.conv(x)
+                c = self.fc(h.view(h.size(0), -1))
+                return c
 
         class Generator(nn.Module):
             def __init__(self, z_dim):
@@ -51,4 +61,5 @@ class Model(base.GanModelBase):
                 x = self.deconv(h)
                 return x
 
+        self.discriminator = Discriminator()
         self.generator = Generator(self.z_dim)

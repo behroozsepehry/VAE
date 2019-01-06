@@ -26,4 +26,4 @@ class VaeModelBase(models.base.ModelBase):
         z_params = self.encode(x)
         z = self.reparameterize(*z_params)
         x_params = self.decode(z)
-        return x_params + z_params
+        return (x,) + x_params + z_params

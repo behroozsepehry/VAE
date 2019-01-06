@@ -10,8 +10,8 @@ class Loss(bce_base.BceLossBase):
         super(Loss, self).__init__(*args, **kwargs)
 
     def _create_label_tensors(self, y_real, y_fake):
-        l_real = torch.new_full(y_real.size(), self.real_label, device=y_real.device)
-        l_fake = torch.new_full(y_fake.size(), self.fake_label, device=y_fake.device)
+        l_real = torch.full(y_real.size(), self.REAL_LABEL, device=y_real.device)
+        l_fake = torch.full(y_fake.size(), self.FAKE_LABEL, device=y_fake.device)
         return l_real, l_fake
 
     def _compute_losses(self, y_real, l_real, y_fake, l_fake):
@@ -21,7 +21,7 @@ class Loss(bce_base.BceLossBase):
 
     def __call__(self, *args, **kwargs):
         self._check_args(*args, **kwargs)
-        (x_real, y_real), (x_fake, y_fake) = tuple(args)
+        x_real, y_real, x_fake, y_fake = tuple(args)
         l_real, l_fake = self._create_label_tensors(y_real, y_fake)
         bce_real, bce_fake = self._compute_losses(y_real, l_real, y_fake, l_fake)
         loss_discriminator = bce_real + bce_fake

@@ -7,13 +7,15 @@ from testers import base
 
 class Tester(base.TesterBase):
     def __init__(self, *args, **kwargs):
-            super(Tester, self).__init__()
+        super(Tester, self).__init__()
+        self.args = args
+        self.kwargs = kwargs
 
     def __call__(self, *args, **kwargs):
         assert len(args) == 6
         model, epoch, tester_loader, losses, device, logger = tuple(args)
-        verbose = kwargs.get('verbose', False)
-        results_path = kwargs.get('path')
+        verbose = kwargs.get('verbose', self.kwargs.get('verbose', False))
+        results_path = kwargs.get('path', self.kwargs.get('path'))
         if not results_path:
             if verbose:
                 print("\n%s\nNo path is given, terminating test.\n%s" % ('#*10', '#*10'))
@@ -28,7 +30,7 @@ class Tester(base.TesterBase):
                 data = data.to(device)
                 model_out = model(data)
                 for il in range(nol):
-                    test_losses[il] += losses[il](*((data,)+model_out)).item()
+                    test_losses[il] += losses[il](*model_out).item()
                 if batch_idx == 0:
                     n = min(data.size(0), 8)
                     x_mu = model_out[0]

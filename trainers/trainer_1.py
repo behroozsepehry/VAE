@@ -6,6 +6,8 @@ from trainers import base
 class Trainer(base.TrainerBase):
     def __init__(self, *args, **kwargs):
         super(Trainer, self).__init__()
+        self.args = args
+        self.kwargs = kwargs
 
     def __call__(self, *args, **kwargs):
         assert len(args) == 7
@@ -15,8 +17,8 @@ class Trainer(base.TrainerBase):
         assert len(optimizers) == len(loss_functions)
         nol = len(optimizers)
 
-        log_interval = kwargs.get('log_interval', 1)
-        verbose = kwargs.get('verbose', False)
+        log_interval = kwargs.get('log_interval', self.kwargs.get('log_interval', 1))
+        verbose = kwargs.get('verbose', self.kwargs.get('verbose', False))
         model.train()
         train_losses = np.zeros(nol)
         for batch_idx, (data, _) in enumerate(trainer_loader):
@@ -25,8 +27,8 @@ class Trainer(base.TrainerBase):
             train_batch_losses = np.zeros(nol)
             for i in range(nol):
                 optimizers[i].zero_grad()
-                loss = loss_functions[i](*((data,) + model_out))
-                loss.backward()
+                loss = loss_functions[i](*model_out)
+                loss.backward(retain_graph=True)
                 train_batch_losses[i] += loss.item()
                 optimizers[i].step()
             train_losses += train_batch_losses

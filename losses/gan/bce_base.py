@@ -7,14 +7,12 @@ from losses import base
 
 class BceLossBase(base.LossBase):
     def __init__(self, *args, **kwargs):
-        super(BceLossBase, self).__init__(*args, **kwargs)
-        self.real_label = kwargs.get('real_label', 1)
-        self.fake_label = kwargs.get('fake_label', 0)
+        super(BceLossBase, self).__init__()
+        self.REAL_LABEL = kwargs.get('REAL_LABEL', 1)
+        self.FAKE_LABEL = kwargs.get('FAKE_LABEL', 0)
 
     def _check_args(self, *args, **kwargs):
-        assert len(args) == 2
-        assert len(args[0]) == 2
-        assert len(args[1]) == 2
+        assert len(args) == 4
 
     def __call__(self, *args, **kwargs):
         return NotImplementedError

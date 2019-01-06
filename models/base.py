@@ -7,6 +7,7 @@ class ModelBase(nn.Module):
         super(ModelBase, self).__init__()
         self.save_path = kwargs.get('save_path')
         self.load_path = kwargs.get('load_path')
+        self.name = kwargs.get('name')
 
     def load(self, path=None, *args, **kwargs):
         if not path:

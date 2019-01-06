@@ -10,7 +10,7 @@ class Loss(bce_generator.Loss):
         super(Loss, self).__init__(*args, **kwargs)
 
     def _create_label_tensors(self, y_fake):
-        l_fake = torch.new_full(y_fake.size(), self.real_label, device=y_fake.device)
+        l_fake = torch.full(y_fake.size(), self.REAL_LABEL, device=y_fake.device)
         return l_fake
 
     def __call__(self, *args, **kwargs):

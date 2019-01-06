@@ -5,9 +5,9 @@ from torchvision import datasets, transforms
 from utilities import general_utilities
 
 
-def get_instances(folder, instance_type, **kwargs):
+def get_instances(folder, instance_type, *args):
     instance_list = []
-    for i, kwargs_instance in enumerate(kwargs[instance_type]):
+    for i, kwargs_instance in enumerate(args):
         instance_filename = kwargs_instance['name']
         if not instance_filename:
             instance = None
@@ -18,45 +18,45 @@ def get_instances(folder, instance_type, **kwargs):
     return instance_list
 
 
-def get_models(**kwargs):
-    return get_instances('models/', 'Model', **kwargs)
+def get_models(*args):
+    return get_instances('models/', 'Model', *args)
 
 
 def get_optimizer(model_, **kwargs):
-    optimizer_name = kwargs['Optimizer']['name']
+    optimizer_name = kwargs['name']
     optimizer_constructor = getattr(optim, optimizer_name)
-    optimizer = optimizer_constructor(model_.parameters(), **kwargs['Optimizer']['args'])
+    optimizer = optimizer_constructor(model_.parameters(), **kwargs['args'])
     return optimizer
 
 
 def get_dataloader(**kwargs):
-    dataset_path = kwargs['Dataloader']['path']
-    dataset_name = kwargs['Dataloader']['name']
+    dataset_path = kwargs['path']
+    dataset_name = kwargs['name']
     dataset_constructor = getattr(datasets, dataset_name)
     trainer_loader = torch.utils.data.DataLoader(
         dataset_constructor(dataset_path, train=True, download=True,  transform=transforms.ToTensor()),
-        **kwargs['Dataloader']['args'])
+        **kwargs['args'])
     tester_loader = torch.utils.data.DataLoader(
         dataset_constructor(dataset_path, train=False, transform=transforms.ToTensor()),
-        **kwargs['Dataloader']['args'])
+        **kwargs['args'])
 
     return trainer_loader, tester_loader
 
 
-def get_trainers(**kwargs):
-    return get_instances('trainers/', 'Trainer', **kwargs)
+def get_trainers(*args):
+    return get_instances('trainers/', 'Trainer', *args)
 
 
-def get_testers(**kwargs):
-    return get_instances('testers/', 'Tester', **kwargs)
+def get_testers(*args):
+    return get_instances('testers/', 'Tester', *args)
 
 
-def get_losses(**kwargs):
-    return get_instances('losses/', 'Loss', **kwargs)
+def get_losses(*args):
+    return get_instances('losses/', 'Loss', *args)
 
 
 def get_device(**kwargs):
-    device_name = kwargs['Device']['name']
+    device_name = kwargs['name']
     if torch.cuda.is_available():
         device = torch.device(device_name)
     else:
@@ -68,10 +68,10 @@ def get_device(**kwargs):
 
 
 def get_logger(**kwargs):
-    if kwargs['Logger']['name'] == 'tensorboard':
+    if kwargs['name'] == 'tensorboard':
         from tensorboardX import SummaryWriter
-        logger = SummaryWriter(**kwargs['Logger']['args'])
-    elif not kwargs['Logger']['name']:
+        logger = SummaryWriter(**kwargs['args'])
+    elif not kwargs['name']:
         logger = None
     else:
         raise NotImplementedError
