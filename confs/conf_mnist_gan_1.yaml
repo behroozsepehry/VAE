@@ -36,7 +36,7 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-2,
+                "lr": 1.0e-3,
             },
       },
   ],
@@ -76,9 +76,10 @@
     [
         {
             "name": "gan/bce_discriminator",
+            "REAL_LABEL": 0.9,
         },
         {
-            "name": "gan/bce_reverse_generator",
+            "name": "gan/bce_generator",
         },
     ],
 
