@@ -140,3 +140,6 @@ class ModelBase(nn.Module):
     def evaluate_model(self, *args, **kwargs):
         return self.evaluate_epoch(*args, **kwargs)
 
+    def get_parameters_groups(self):
+        raise NotImplementedError
+

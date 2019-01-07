@@ -52,3 +52,6 @@ class VaeModelBase(models.base.ModelBase):
                 sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses[0], device)
                 for i, l in enumerate(sampling_iterations_dataset_losses):
                     logger.add_scalar('data/sampling_iterations_%s_losses' % data_name, l, i)
+
+    def get_parameters_groups(self):
+        return [self.parameters()]

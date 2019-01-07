@@ -10,12 +10,22 @@
             "z_args":
               {
                   "name": "standard_normal",
-              }
+              },
           #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
           #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
+            "train_args":
+              {
+                  "n_epochs": 10,
+                  "verbose": True,
+                  "log_interval": 20,
+              },
+            "evaluate_args":
+              {
+                  "verbose": True,
+                  "path": "files/results/MNIST/gan_bce_mnist_cnn_1",
+              },
         },
     ],
-
 
   "Device":
     {
@@ -28,7 +38,7 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-3,
+                "lr": 0.0,
             },
       },
 
@@ -36,7 +46,7 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-3,
+                "lr": 1.0e-5,
             },
       },
   ],
@@ -53,33 +63,14 @@
         },
     },
 
-  "Trainers":
-    [
-        {
-            "name": "trainer_1",
-            "n_epochs": 10,
-            "verbose": True,
-            "log_interval": 20,
-        },
-    ],
-
-  "Testers":
-    [
-        {
-            "name": "tester_1",
-            "path": "files/results/MNIST/gan_bce_mnist_cnn_1",
-            "verbose": True,
-        },
-    ],
-
   "Losses":
     [
         {
             "name": "gan/bce_discriminator",
-            "REAL_LABEL": 0.9,
+            "REAL_LABEL": 1.0,
         },
         {
-            "name": "gan/bce_generator",
+            "name": "gan/bce_reverse_generator",
         },
     ],
 

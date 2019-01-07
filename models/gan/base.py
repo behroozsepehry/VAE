@@ -1,3 +1,5 @@
+import numpy as np
+
 import models.base
 from utilities import sampler
 
@@ -23,3 +25,32 @@ class GanModelBase(models.base.ModelBase):
         y_real = self.discriminator(x_real)
         y_fake = self.discriminator(x_fake)
         return x_real, y_real, x_fake, y_fake
+
+    def forward_backward(self, *args, **kwargs):
+        assert len(args) == 3
+        x_real, (d_loss_func, g_loss_func), (d_optim, g_optim) = args
+        y_real = self.discriminator(x_real)
+        x_fake, z_fake = self.generate(x_real.device, n_samples=x_real.size(0))
+
+        y_fake = self.discriminator(x_fake.detach())
+        d_optim.zero_grad()
+        d_loss = d_loss_func(x_real, y_real, x_fake.detach(), y_fake)
+        d_loss.backward()
+        d_optim.step()
+
+        y_fake = self.discriminator(x_fake)
+        g_optim.zero_grad()
+        g_loss = g_loss_func(None, None, x_fake, y_fake)
+        g_loss.backward()
+        g_optim.step()
+
+        losses = np.array([d_loss.item(), g_loss.item()])
+        # print(y_real.mean().item(), y_fake.mean().item())
+        # print(d_optim.param_groups[0]['params'][0].grad.cpu().numpy())
+        # print('######################')
+        # print(g_optim.param_groups[0]['params'][0].grad.cpu().numpy())
+
+        return losses
+
+    def get_parameters_groups(self):
+        return [self.discriminator.parameters(), self.generator.parameters()]

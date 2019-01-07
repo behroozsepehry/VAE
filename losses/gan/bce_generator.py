@@ -19,7 +19,7 @@ class Loss(bce_base.BceLossBase):
 
     def __call__(self, *args, **kwargs):
         self._check_args(*args, **kwargs)
-        x_real, y_real, x_fake, y_fake = tuple(args)
+        _, _, _, y_fake = tuple(args)
         l_fake = self._create_label_tensors(y_fake)
         bce_fake = self._compute_losses(y_fake, l_fake)
         loss_generator = -bce_fake

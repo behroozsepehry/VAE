@@ -22,11 +22,16 @@ def get_models(*args):
     return get_instances('models/', 'Model', *args)
 
 
-def get_optimizer(model_, **kwargs):
+def get_optimizer(parameters, **kwargs):
     optimizer_name = kwargs['name']
     optimizer_constructor = getattr(optim, optimizer_name)
-    optimizer = optimizer_constructor(model_.parameters(), **kwargs['args'])
+    optimizer = optimizer_constructor(parameters, **kwargs['args'])
     return optimizer
+
+
+def get_optimizers(parameters_groups, *args):
+    assert len(parameters_groups) == len(args)
+    return [get_optimizer(parameters_groups[i], **args[i]) for i in range(len(args))]
 
 
 def get_dataloader(**kwargs):
