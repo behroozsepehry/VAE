@@ -9,8 +9,7 @@ from utilities import sampler as smp
 class VaeModelNormalBase(base.VaeModelBase):
     def __init__(self, *args, **kwargs):
         super(VaeModelNormalBase, self).__init__(*args, **kwargs)
-        z_dim = kwargs['z_dim']
-        self.z_dim = z_dim
+        self.z_args = kwargs['z_args']
         self.sampling_iterations = kwargs.get('sampling_iterations', [0])
         self.z_generator = smp.Sampler(name='standard_normal')
 
@@ -23,7 +22,7 @@ class VaeModelNormalBase(base.VaeModelBase):
 
     def generate(self, device, *args, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
-        z_mu = self.z_generator((n_samples, self.z_dim)).to(device)
+        z_mu = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
         x_samples = self.do_sampling_iterations(z_mu, device, *args, **kwargs)
         return x_samples
 

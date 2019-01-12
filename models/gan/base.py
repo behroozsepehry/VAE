@@ -7,14 +7,14 @@ from utilities import sampler
 class GanModelBase(models.base.ModelBase):
     def __init__(self, *args, **kwargs):
         super(GanModelBase, self).__init__(*args, **kwargs)
-        self.z_dim = kwargs['z_dim']
+        self.z_args = kwargs['z_args']
         self.discriminator = None
         self.generator = None
         self.z_generator = sampler.Sampler(**kwargs['z_args'])
 
     def generate(self, device, *args, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
-        z = self.z_generator((n_samples, self.z_dim)).to(device)
+        z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
         x = self.generator(z)
         return x, z
 

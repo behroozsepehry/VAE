@@ -62,4 +62,4 @@ class Model(base.GanModelBase):
                 return x
 
         self.discriminator = Discriminator()
-        self.generator = Generator(self.z_dim)
+        self.generator = Generator(self.z_args['z_dim'])

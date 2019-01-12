@@ -8,11 +8,12 @@ from models.vae import normal_base
 class Model(normal_base.VaeModelNormalBase):
     def __init__(self, *args, **kwargs):
         super(Model, self).__init__(*args, **kwargs)
+        z_dim = self.z_args['z_dim']
 
         self.fc1 = nn.Linear(784, 400)
-        self.fc21 = nn.Linear(400, self.z_dim)
-        self.fc22 = nn.Linear(400, self.z_dim)
-        self.fc3 = nn.Linear(self.z_dim, 400)
+        self.fc21 = nn.Linear(400, z_dim)
+        self.fc22 = nn.Linear(400, z_dim)
+        self.fc3 = nn.Linear(z_dim, 400)
         self.fc41 = nn.Linear(400, 784)
         self.fc42 = nn.Linear(400, 784)
 

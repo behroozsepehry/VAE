@@ -26,10 +26,11 @@ class Model(normal_base.VaeModelNormalBase):
             nn.MaxPool2d(2, stride=1),
         )
 
-        self.fc11 = nn.Linear(16 * 13 * 13, self.z_dim)
-        self.fc12 = nn.Linear(16 * 13 * 13, self.z_dim)
+        z_dim = self.z_args['z_dim']
+        self.fc11 = nn.Linear(16 * 13 * 13, z_dim)
+        self.fc12 = nn.Linear(16 * 13 * 13, z_dim)
 
-        self.fc2 = nn.Sequential(nn.Linear(self.z_dim, 7 * 7 * 32),
+        self.fc2 = nn.Sequential(nn.Linear(z_dim, 7 * 7 * 32),
                                  nn.ReLU(True),
                                  )
 
