@@ -55,7 +55,7 @@ class Model(normal_base.VaeModelNormalBase):
         z_mu, z_logvar = self.fc11(h1), self.fc12(h1)
         return dict(z_mu=z_mu, z_logvar=z_logvar)
 
-    def decode(self, z, **kwargs):
+    def _decode(self, z, **kwargs):
         h2 = self.fc2(z).view(z.size(0), 32, 7, 7)
         h3 = self.deconv(h2)
         x_mu, x_logvar = self.deconv_mu(h3), torch.clamp(self.deconv_logvar(h3), min=-10.)

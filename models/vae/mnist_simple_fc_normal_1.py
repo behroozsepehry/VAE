@@ -23,7 +23,7 @@ class Model(normal_base.VaeModelNormalBase):
         z_mu, z_logvar = self.fc21(h1), self.fc22(h1)
         return dict(z_mu=z_mu, z_logvar=z_logvar)
 
-    def decode(self, z, **kwargs):
+    def _decode(self, z, **kwargs):
         h3 = F.relu(self.fc3(z))
         x_mu, x_logvar = torch.sigmoid(self.fc41(h3)), torch.clamp((self.fc42(h3)), min=-10.)
         return dict(x_mu=x_mu, x_logvar=x_logvar)

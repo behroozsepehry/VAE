@@ -22,3 +22,10 @@ class NormalSparseBase(normal_base.VaeModelNormalBase):
             z_2 = (torch.sign(h1) + 1.)/2.
         z_d = self.fc_d_2(z_2)
         return dict(z_d=z_d, z_2=z_2)
+
+    def decode(self, z, **kwargs):
+        denoised = self._denoise(z)
+        z_d, z_2 = denoised['z_d'], denoised['z_2']
+        x_params = self._decode(z_d)
+        return dict(**x_params, z_2=z_2)
+

@@ -12,8 +12,14 @@ class VaeModelBase(models.base.ModelBase):
     def encode(self, *args, **kwargs):
         raise NotImplementedError
 
-    def decode(self, *args, **kwargs):
+    def _decode(self, *args, **kwargs):
         raise NotImplementedError
+
+    def decode(self, z, **kwargs):
+        """separate the _decode and decode allows for modified decode that
+            calls _decode, e.g., adding sparsity
+        """
+        return self._decode(z, **kwargs)
 
     def reparameterize(self, *args, **kwargs):
         raise NotImplementedError
