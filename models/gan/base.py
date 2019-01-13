@@ -44,7 +44,7 @@ class GanModelBase(models.base.ModelBase):
         g_loss.backward()
         g_optim.step()
 
-        losses = np.array([d_loss.item(), g_loss.item()])
+        losses = np.array([d_loss.item(), g_loss.item(), y_real.sum().item(), y_fake.sum().item()])
         # print(y_real.mean().item(), y_fake.mean().item())
         # print(d_optim.param_groups[0]['params'][0].grad.cpu().numpy())
         # print('######################')
