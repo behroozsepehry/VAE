@@ -18,19 +18,19 @@ class GanModelBase(models.base.ModelBase):
         x = self.generator(z)
         return dict(x=x, z=z)
 
-    def forward(self, *args, **kwargs):
-        assert len(args) == 1
-        x_real, = tuple(args)
-        x_fake, z_fake = self.generate(x_real.device, n_samples=x_real.size(0))
+    def forward(self, x_real, **kwargs):
+        samples = self.generate(x_real.device, n_samples=x_real.size(0))
+        x_fake = samples['x']
         y_real = self.discriminator(x_real)
         y_fake = self.discriminator(x_fake)
         return dict(x_real=x_real, y_real=y_real, x_fake=x_fake, y_fake=y_fake)
 
-    def forward_backward(self, *args, **kwargs):
-        assert len(args) == 3
-        x_real, (d_loss_func, g_loss_func), (d_optim, g_optim) = args
+    def forward_backward(self, x, loss_functions, optimizers, **kwargs):
+        x_real = x
+        d_loss_func, g_loss_func = loss_functions
+        d_optim, g_optim = optimizers
         y_real = self.discriminator(x_real)
-        x_fake, z_fake = self.generate(x_real.device, n_samples=x_real.size(0))
+        x_fake = self.generate(x_real.device, n_samples=x_real.size(0))['x']
 
         y_fake = self.discriminator(x_fake.detach())
         d_optim.zero_grad()

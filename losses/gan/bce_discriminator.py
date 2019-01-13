@@ -19,9 +19,7 @@ class Loss(bce_base.BceLossBase):
         bce_fake = F.binary_cross_entropy(y_fake, l_fake, reduction='sum')
         return bce_real, bce_fake
 
-    def __call__(self, *args, **kwargs):
-        self._check_args(*args, **kwargs)
-        _, y_real, _, y_fake = tuple(args)
+    def __call__(self, x_real, y_real, x_fake, y_fake, **kwargs):
         l_real, l_fake = self._create_label_tensors(y_real, y_fake)
         bce_real, bce_fake = self._compute_losses(y_real, l_real, y_fake, l_fake)
         loss_discriminator = bce_real + bce_fake

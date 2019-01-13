@@ -13,6 +13,6 @@ class Loss(bce_generator.Loss):
         l_fake = torch.full(y_fake.size(), self.REAL_LABEL, device=y_fake.device)
         return l_fake
 
-    def __call__(self, *args, **kwargs):
-        loss_generator = -super(Loss, self).__call__(*args, **kwargs)
+    def __call__(self, x_real, y_real, x_fake, y_fake, **kwargs):
+        loss_generator = -super(Loss, self).__call__(x_real, y_real, x_fake, y_fake, **kwargs)
         return loss_generator
