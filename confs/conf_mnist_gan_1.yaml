@@ -5,7 +5,7 @@
   "Models":
     [
         {
-            "name": "gan/mnist_cnn_1",
+            "name": "gan/mnist_fc_1",
             "z_args":
               {
                   "z_dim": 20,
@@ -15,14 +15,14 @@
           #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
             "train_args":
               {
-                  "n_epochs": 10,
+                  "n_epochs": 100,
                   "verbose": True,
                   "log_interval": 20,
               },
             "evaluate_args":
               {
                   "verbose": True,
-                  "path": "files/results/MNIST/gan_bce_mnist_cnn_1",
+                  "path": "files/results/MNIST/gan_bce_mnist_fc_1",
               },
         },
     ],
@@ -38,7 +38,7 @@
           "name": "Adam",
           "args":
             {
-                "lr": 0.0,
+                "lr": 1.0e-03,
             },
       },
 
@@ -46,7 +46,7 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-5,
+                "lr": 1.0e-03,
             },
       },
   ],
@@ -67,7 +67,7 @@
     [
         {
             "name": "gan/bce_discriminator",
-            "REAL_LABEL": 1.0,
+            "REAL_LABEL": 0.9,
         },
         {
             "name": "gan/bce_reverse_generator",
@@ -79,7 +79,7 @@
         "name": "tensorboard",
         "args":
           {
-              "log_dir": "files/results/MNIST/gan_bce_mnist_cnn_1/logs/exp-1",
+              "log_dir": "files/results/MNIST/gan_bce_mnist_fc_1/logs/exp-1",
           }
     }
 }
