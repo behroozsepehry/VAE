@@ -17,17 +17,13 @@ class Model(normal_base.VaeModelNormalBase):
         self.fc41 = nn.Linear(400, 784)
         self.fc42 = nn.Linear(400, 784)
 
-    def encode(self, *args, **kwargs):
-        assert len(args) == 1
-        x, = tuple(args)
+    def encode(self, x, **kwargs):
         x = x.view(x.size(0), -1)
         h1 = F.relu(self.fc1(x))
         z_mu, z_logvar = self.fc21(h1), self.fc22(h1)
-        return z_mu, z_logvar
+        return dict(z_mu=z_mu, z_logvar=z_logvar)
 
-    def decode(self, *args, **kwargs):
-        assert len(args) == 1
-        z, = tuple(args)
+    def decode(self, z, **kwargs):
         h3 = F.relu(self.fc3(z))
         x_mu, x_logvar = torch.sigmoid(self.fc41(h3)), torch.clamp((self.fc42(h3)), min=-10.)
-        return x_mu, x_logvar
+        return dict(x_mu=x_mu, x_logvar=x_logvar)

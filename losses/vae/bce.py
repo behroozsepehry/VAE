@@ -10,9 +10,7 @@ class Loss(base.LossBase):
         super(Loss, self).__init__()
 
     # Reconstruction + KL divergence losses summed over all elements and batch
-    def __call__(self, *args, **kwargs):
-        assert len(args) == 5
-        x, x_mu, x_logvar, z_mu, z_logvar = tuple(args)
+    def __call__(self, x, x_mu, x_logvar, z_mu, z_logvar, **kwargs):
         BCE = F.binary_cross_entropy(x_mu, x.view(x_mu.size()), reduction='sum')
 
         # see Appendix B from VAE paper:

@@ -11,9 +11,7 @@ class Loss(base.LossBase):
         super(Loss, self).__init__()
 
     # Reconstruction + KL divergence losses summed over all elements and batch
-    def __call__(self, *args, **kwargs):
-        assert len(args) == 5
-        x, x_mu, x_logvar, z_mu, z_logvar = tuple(args)
+    def __call__(self, x, x_mu, x_logvar, z_mu, z_logvar, **kwargs):
         mse = 0.5 * (torch.sum(x_logvar.exp() + (((x_mu - x.view(x_mu.size())).pow(2))/(x_logvar.exp())))
                      + z_mu.size(0) * z_mu.size(1) * np.log(2*np.pi))
         # print(x_logvar.min(), x_logvar.mean())

@@ -13,25 +13,24 @@ class VaeModelNormalBase(base.VaeModelBase):
         self.sampling_iterations = kwargs.get('sampling_iterations', [0])
         self.z_generator = smp.Sampler(name='standard_normal')
 
-    def reparameterize(self, *args, **kwargs):
-        assert len(args) == 2
-        mu, logvar = tuple(args)
-        std = torch.exp(0.5*logvar)
+    def reparameterize(self, z_mu, z_logvar, **kwargs):
+        std = torch.exp(0.5*z_logvar)
         eps = torch.randn_like(std)
-        return eps.mul(std).add_(mu)
+        z = eps.mul(std).add_(z_mu)
+        return dict(z=z)
 
-    def generate(self, device, *args, **kwargs):
+    def generate(self, device, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
-        z_mu = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
-        x_samples = self.do_sampling_iterations(z_mu, device, *args, **kwargs)
-        return x_samples
+        z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
+        samples = self.do_sampling_iterations(z, device, **kwargs)
+        return samples
 
-    def do_sampling_iterations(self, z_mu, device, *args, **kwargs):
+    def do_sampling_iterations(self, z_mu, device, **kwargs):
         sampling_iterations = kwargs.get('sampling_iterations', self.sampling_iterations)
         assert hasattr(sampling_iterations, '__len__')
         max_sampling_iterations = max(sampling_iterations)
 
-        x_mu, _ = self.decode(z_mu)
+        x_mu = self.decode(z_mu)['x_mu']
 
         x_mu_list = []
         z_mu_list = []
@@ -39,10 +38,10 @@ class VaeModelNormalBase(base.VaeModelBase):
             if i in sampling_iterations:
                 x_mu_list.append(x_mu)
                 z_mu_list.append(z_mu)
-            z_mu, _ = self.encode(x_mu)
-            x_mu, _ = self.decode(z_mu)
+            z_mu = self.encode(x_mu)['z_mu']
+            x_mu = self.decode(z_mu)['x_mu']
 
-        return x_mu_list, z_mu_list
+        return dict(x=x_mu_list, z=z_mu_list)
 
     def get_sampling_iterations_loss(self, dataloader, loss_function, device, *args, **kwargs):
         sampling_iterations = kwargs.get('sampling_iterations', self.sampling_iterations)
@@ -53,17 +52,18 @@ class VaeModelNormalBase(base.VaeModelBase):
 
         losses = np.zeros(len(loss_sampling_iterations))
         with torch.no_grad():
-            for batch_idx, (data, _) in enumerate(dataloader):
-                data = data.to(device)
-                z_params = self.encode(data)
-                z = self.reparameterize(*z_params)
-                x_mu_list, z_mu_list = self.do_sampling_iterations(z,
+            for batch_idx, (x, _) in enumerate(dataloader):
+                x = x.to(device)
+                z_params = self.encode(x)
+                z_r = self.reparameterize(z_params['z_mu'], z_params['z_logvar'])
+                samples = self.do_sampling_iterations(z_r['z'],
                                                                    device,
                                                                    sampling_iterations=loss_sampling_iterations)
+                x_mu_list, z_mu_list = samples['x'], samples['z']
                 for i, iteration in enumerate(loss_sampling_iterations):
                     x_params = self.decode(z_mu_list[i])
-                    loss = loss_function(*((data,)+x_params+z_params))
+                    loss = loss_function(x=x, **x_params, **z_params)
                     losses[i] += loss.item()
 
         losses /= len(dataloader.dataset)
-        return losses
+        return dict(losses=losses)

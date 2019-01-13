@@ -23,7 +23,7 @@
             "evaluate_args":
               {
                   "verbose": True,
-                  "path": "files/results/MNIST/vae_mse_fc_repeat_3",
+                  "path": "files/results/MNIST/vae_mse_cnn_repeat_3",
               },
         },
     ],
@@ -69,7 +69,7 @@
         "name": "tensorboard",
         "args":
           {
-              "log_dir": "files/results/MNIST/vae_mse_fc_repeat_3/logs/exp-1",
+              "log_dir": "files/results/MNIST/vae_mse_cnn_repeat_3/logs/exp-1",
           }
     },
 }

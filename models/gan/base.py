@@ -12,11 +12,11 @@ class GanModelBase(models.base.ModelBase):
         self.generator = None
         self.z_generator = sampler.Sampler(**kwargs['z_args'])
 
-    def generate(self, device, *args, **kwargs):
+    def generate(self, device, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
         z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
         x = self.generator(z)
-        return x, z
+        return dict(x=x, z=z)
 
     def forward(self, *args, **kwargs):
         assert len(args) == 1
@@ -24,7 +24,7 @@ class GanModelBase(models.base.ModelBase):
         x_fake, z_fake = self.generate(x_real.device, n_samples=x_real.size(0))
         y_real = self.discriminator(x_real)
         y_fake = self.discriminator(x_fake)
-        return x_real, y_real, x_fake, y_fake
+        return dict(x_real=x_real, y_real=y_real, x_fake=x_fake, y_fake=y_fake)
 
     def forward_backward(self, *args, **kwargs):
         assert len(args) == 3
@@ -50,7 +50,7 @@ class GanModelBase(models.base.ModelBase):
         # print('######################')
         # print(g_optim.param_groups[0]['params'][0].grad.cpu().numpy())
 
-        return losses
+        return dict(losses=losses)
 
     def get_parameters_groups(self):
         return [self.discriminator.parameters(), self.generator.parameters()]

@@ -22,9 +22,7 @@ class Model(base.VaeModelBase):
     def reparameterize(self, *args, **kwargs):
         return self.model_1.reparameterize(*args, **kwargs)
 
-    def decode(self, *args, **kwargs):
-        assert len(args) == 1
-        z, = tuple(args)
+    def decode(self, z, **kwargs):
         if self.training:
             z2 = torch.sigmoid(self.fc1(z))
         else:
@@ -32,9 +30,7 @@ class Model(base.VaeModelBase):
         h2 = F.relu(self.fc2(z2))
         return self.model_1.decode(h2) + (z2,)
 
-    def forward(self, *args, **kwargs):
-        assert len(args) == 1
-        x, = tuple(args)
+    def forward(self, x, **kwargs):
         mu, logvar = self.encode(x.view(-1, 784))
         z = self.reparameterize(mu, logvar)
         x_recon, z2 = self.decode(z)
