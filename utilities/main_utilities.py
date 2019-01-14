@@ -5,21 +5,23 @@ from torchvision import datasets, transforms
 from utilities import general_utilities
 
 
-def get_instances(folder, instance_type, *args):
-    instance_list = []
-    for i, kwargs_instance in enumerate(args):
-        instance_filename = kwargs_instance['name']
-        if not instance_filename:
-            instance = None
-        else:
-            module = general_utilities.import_from_path(folder+instance_filename+'.py')
-            instance = getattr(module, instance_type)(**kwargs_instance)
-        instance_list.append(instance)
-    return instance_list
+def get_instance(folder, instance_type, **kwargs):
+    kwargs_instance = kwargs
+    instance_filename = kwargs_instance['name']
+    if not instance_filename:
+        instance = None
+    else:
+        module = general_utilities.import_from_path(folder+instance_filename+'.py')
+        instance = getattr(module, instance_type)(**kwargs_instance)
+    return instance
 
 
-def get_models(*args):
-    return get_instances('models/', 'Model', *args)
+def get_instances_dict(folder, instance_type, **kwargs):
+    return {k: get_instance(folder, instance_type, **v) for k, v in kwargs.items()}
+
+
+def get_model(**kwargs):
+    return get_instance('models/', 'Model', **kwargs)
 
 
 def get_optimizer(parameters, **kwargs):
@@ -29,9 +31,9 @@ def get_optimizer(parameters, **kwargs):
     return optimizer
 
 
-def get_optimizers(parameters_groups, *args):
-    assert len(parameters_groups) == len(args)
-    return [get_optimizer(parameters_groups[i], **args[i]) for i in range(len(args))]
+def get_optimizers(parameters_groups, **kwargs):
+    assert parameters_groups.keys() == kwargs.keys()
+    return {k: get_optimizer(parameters_groups[k], **v) for k, v in kwargs.items()}
 
 
 def get_dataloader(**kwargs):
@@ -48,16 +50,8 @@ def get_dataloader(**kwargs):
     return trainer_loader, tester_loader
 
 
-def get_trainers(*args):
-    return get_instances('trainers/', 'Trainer', *args)
-
-
-def get_testers(*args):
-    return get_instances('testers/', 'Tester', *args)
-
-
-def get_losses(*args):
-    return get_instances('losses/', 'Loss', *args)
+def get_losses(**kwargs):
+    return get_instances_dict('losses/', 'Loss', **kwargs)
 
 
 def get_device(**kwargs):

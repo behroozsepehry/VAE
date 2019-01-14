@@ -17,7 +17,7 @@ class VaeModelBase(models.base.ModelBase):
 
     def decode(self, z, **kwargs):
         """separate the _decode and decode allows for modified decode that
-            calls _decode, e.g., adding sparsity
+            calls _decode, e.g., adding sparsity as part of decoding
         """
         return self._decode(z, **kwargs)
 
@@ -33,13 +33,13 @@ class VaeModelBase(models.base.ModelBase):
     def forward_backward(self, x, loss_functions, optimizers, **kwargs):
         nol = len(optimizers)
         model_out = self(x)
-        train_batch_losses = np.zeros(nol)
-        for i in range(nol):
-            optimizers[i].zero_grad()
-            loss = loss_functions[i](**model_out)
+        train_batch_losses = {}
+        for k in loss_functions:
+            optimizers[k].zero_grad()
+            loss = loss_functions[k](**model_out)
             loss.backward()
-            train_batch_losses[i] += loss.item()
-            optimizers[i].step()
+            train_batch_losses[k] = loss.item()
+            optimizers[k].step()
         return dict(losses=train_batch_losses)
 
     def train_model(self, device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs):
@@ -52,4 +52,4 @@ class VaeModelBase(models.base.ModelBase):
                     logger.add_scalar('data/sampling_iterations_%s_losses' % data_name, l, i)
 
     def get_parameters_groups(self):
-        return [self.parameters()]
+        return {'model': self.parameters()}

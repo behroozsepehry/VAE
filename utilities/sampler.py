@@ -9,8 +9,9 @@ class Sampler(object):
             self._sampler_func = lambda size: torch.randn(*size, device=self.device)
         elif self.name == 'uniform_int':
             self.low = kwargs.get('low', 0)
-            self.high = kwargs.get('high', 1)
-            self._sampler_func = lambda size: torch.randint(self.low, self.high, size, device=self.device)
+            self.high = kwargs.get('high', 2)
+            self._sampler_func = lambda size: torch.randint(self.low, self.high, size,
+                                                            device=self.device, dtype=torch.float)
         else:
             raise NotImplementedError
 

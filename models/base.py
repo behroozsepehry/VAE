@@ -45,21 +45,26 @@ class ModelBase(nn.Module):
         for batch_idx, (x, _) in enumerate(trainer_loader):
             x = x.to(device)
             model_out = self.forward_backward(x, loss_functions, optimizers)
-            train_losses += model_out['losses']
+            loss_values = np.array(list(model_out['losses'].values()))
+            loss_keys = model_out['losses'].keys()
+
+            train_losses += loss_values
             if verbose:
                 if batch_idx % log_interval == 0:
+                    loss_avg_key_value = list(zip(loss_keys, loss_values / len(x)))
                     print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {}'.format(
                         epoch, batch_idx * len(x), len(trainer_loader.dataset),
                         100. * batch_idx / len(trainer_loader),
-                        model_out['losses'] / len(x)))
+                        loss_avg_key_value))
 
         epoch_train_losses = train_losses / len(trainer_loader.dataset)
+        epoch_train_loss_avg_key_value = list(zip(loss_keys, epoch_train_losses))
         if verbose:
             print('====> Epoch: {} Average loss: {}'.format(
                 epoch, epoch_train_losses))
         if logger:
-            for i, loss_ in enumerate(epoch_train_losses):
-                logger.add_scalar('data/epoch_train_loss_%s' % i, loss_, epoch)
+            for (k, v) in epoch_train_loss_avg_key_value:
+                logger.add_scalar('data/epoch_train_loss_%s' % k, v, epoch)
 
         return dict(losses=epoch_train_losses)
 
@@ -92,23 +97,25 @@ class ModelBase(nn.Module):
             for batch_idx, (x, _) in enumerate(tester_loader):
                 x = x.to(device)
                 model_out = self(x)
+                losses_v = list(losses.values())
                 for il in range(nol):
-                    test_losses[il] += losses[il](**model_out).item()
+                    test_losses[il] += losses_v[il](**model_out).item()
                 if 'vae' in self.name and batch_idx == 0:
                     n = min(x.size(0), 8)
-                    x_mu= model_out['x_mu']
+                    x_mu = model_out['x_mu']
                     comparison = torch.cat([x[:n],
                                             x_mu.view(x.size())[:n]])
                     save_image(comparison.cpu(),
                                results_path + '/reconstruction_' + str(epoch) + '.png', nrow=n)
 
+        test_losses_avg = test_losses / len(tester_loader.dataset)
+        test_losses_avg_key_value = list(zip(losses.keys(), test_losses_avg))
         if verbose:
-            test_losses /= len(tester_loader.dataset)
-            print('====> Test set loss: {}'.format(test_losses))
+            print('====> Test set loss: {}'.format(test_losses_avg_key_value))
 
         if logger:
-            for i, loss_ in enumerate(test_losses):
-                logger.add_scalar('data/epoch_test_loss_%s' % i, loss_, epoch)
+            for k, v in test_losses_avg_key_value:
+                logger.add_scalar('data/epoch_test_loss_%s' % k, v, epoch)
 
         batch_size = tester_loader.batch_size
         if hasattr(self, 'generate'):

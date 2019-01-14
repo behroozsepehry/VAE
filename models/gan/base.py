@@ -27,8 +27,8 @@ class GanModelBase(models.base.ModelBase):
 
     def forward_backward(self, x, loss_functions, optimizers, **kwargs):
         x_real = x
-        d_loss_func, g_loss_func = loss_functions
-        d_optim, g_optim = optimizers
+        d_loss_func, g_loss_func = loss_functions['discriminator'], loss_functions['generator']
+        d_optim, g_optim = optimizers['discriminator'], optimizers['generator']
         y_real = self.discriminator(x_real)
         x_fake = self.generate(x_real.device, n_samples=x_real.size(0))['x']
 
@@ -44,7 +44,8 @@ class GanModelBase(models.base.ModelBase):
         g_loss.backward()
         g_optim.step()
 
-        losses = np.array([d_loss.item(), g_loss.item(), y_real.sum().item(), y_fake.sum().item()])
+        losses = dict(discriminator=d_loss.item(), generator=g_loss.item(),
+                      y_real=y_real.sum().item(), y_fake=y_fake.sum().item())
         # print(y_real.mean().item(), y_fake.mean().item())
         # print(d_optim.param_groups[0]['params'][0].grad.cpu().numpy())
         # print('######################')
@@ -53,4 +54,5 @@ class GanModelBase(models.base.ModelBase):
         return dict(losses=losses)
 
     def get_parameters_groups(self):
-        return [self.discriminator.parameters(), self.generator.parameters()]
+        return {'discriminator': self.discriminator.parameters(),
+                'generator': self.generator.parameters()}

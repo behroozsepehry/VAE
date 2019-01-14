@@ -13,15 +13,14 @@ def construct_objects(**kwargs):
         torch.manual_seed(seed)
 
     device = mu.get_device(**kwargs['Device'])
-    models = mu.get_models(*kwargs['Models'])
-    model, = models
+    model = mu.get_model(**kwargs['Model'])
     model.load(map_location=device)
     model = model.to(device)
     trainer_loader, tester_loader = mu.get_dataloader(**kwargs['Dataloader'])
     model_parameters_groups = model.get_parameters_groups()
-    optimizers = mu.get_optimizers(model_parameters_groups, *kwargs['Optimizers'])
-    losses = mu.get_losses(*kwargs['Losses'])
-    assert len(losses) == len(optimizers)
+    optimizers = mu.get_optimizers(model_parameters_groups, **kwargs['Optimizers'])
+    losses = mu.get_losses(**kwargs['Losses'])
+    assert losses.keys() == optimizers.keys()
     logger = mu.get_logger(**kwargs['Logger'])
 
     if logger:
@@ -32,7 +31,7 @@ def construct_objects(**kwargs):
 
 def main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
-    parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_gan_1.yaml', metavar='N',
+    parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_vae_1.yaml', metavar='N',
                         help='configuration file path')
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:
