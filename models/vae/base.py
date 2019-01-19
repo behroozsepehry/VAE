@@ -1,7 +1,3 @@
-import numpy as np
-import torch
-from torch import nn
-
 import models.base
 
 
@@ -31,7 +27,6 @@ class VaeModelBase(models.base.ModelBase):
         return dict(x=x, **x_params, **z_params)
 
     def forward_backward(self, x, loss_functions, optimizers, **kwargs):
-        nol = len(optimizers)
         model_out = self(x)
         train_batch_losses = {}
         for k in loss_functions:

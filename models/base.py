@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 import torch
 from torch import nn
@@ -33,6 +34,8 @@ class ModelBase(nn.Module):
         raise NotImplementedError
 
     def train_epoch(self, epoch, optimizers, trainer_loader, loss_functions, device, logger, **kwargs):
+        t0 = time.time()
+
         assert hasattr(optimizers, '__len__')  # check if we have list, tuple, etc of optimizers
         assert hasattr(loss_functions, '__len__')  # check if we have list, tuple, etc of loss_functions
         assert len(optimizers) == len(loss_functions)
@@ -62,6 +65,8 @@ class ModelBase(nn.Module):
         if verbose:
             print('====> Epoch: {} Average loss: {}'.format(
                 epoch, epoch_train_losses))
+            print('Time: %.2f s' % (time.time()-t0))
+
         if logger:
             for (k, v) in epoch_train_loss_avg_key_value:
                 logger.add_scalar('data/epoch_train_loss_%s' % k, v, epoch)
@@ -82,6 +87,8 @@ class ModelBase(nn.Module):
             test_loss = self.evaluate_epoch(epoch, tester_loader, losses, device, logger)
 
     def evaluate_epoch(self, epoch, tester_loader, losses, device, logger, **kwargs):
+        t0 = time.time()
+
         verbose = kwargs.get('verbose', self.evaluate_args.get('verbose', False))
         results_path = kwargs.get('path', self.evaluate_args.get('path'))
         if not results_path:
@@ -136,6 +143,9 @@ class ModelBase(nn.Module):
                         logger.add_embedding(sample_z_list[i].cpu(),
                                              tag=('data/z_%s_%s'%(epoch, i)),
                                              label_img=x_images)
+
+        if verbose:
+            print('Time: %.2f s' % (time.time()-t0))
 
         return dict(losses=test_losses)
 
