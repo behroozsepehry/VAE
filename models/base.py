@@ -65,7 +65,7 @@ class ModelBase(nn.Module):
         epoch_train_loss_avg_key_value = list(zip(loss_keys, epoch_train_losses))
         if verbose:
             print('====> Epoch: {} Average loss: {}'.format(
-                epoch, epoch_train_losses))
+                epoch, epoch_train_loss_avg_key_value))
             print('Time: %.2f s' % (time.time()-t0))
 
         if logger:
@@ -75,21 +75,28 @@ class ModelBase(nn.Module):
         return dict(losses=epoch_train_losses)
 
     def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
+        t0 = time.time()
         n_epochs = kwargs.get('n_epochs', self.train_args['n_epochs'])
 
-        test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger)['losses'][0]
-        val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger)['losses'][0]
+        test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger, name='test')['losses'][0]
+        val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger, name='val')['losses'][0]
 
         best_val_loss = val_loss
+        validated_test_loss = test_loss
+        validated_train_loss = np.inf
         for epoch in range(1, n_epochs + 1):
             train_loss = self.train_epoch(epoch, optimizers, dataloaders['train'], losses, device, logger)['losses'][0]
-            test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger)['losses'][0]
-            val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger)['losses'][0]
+            test_loss = self.evaluate_epoch(epoch, dataloaders['test'], losses, device, logger, name='test')['losses'][0]
+            val_loss = self.evaluate_epoch(epoch, dataloaders['val'], losses, device, logger, name='val')['losses'][0]
 
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
+                validated_test_loss = test_loss
+                validated_train_loss = train_loss
                 self.save(save_data=dict(epoch=epoch,
                                          train_loss=train_loss, val_loss=val_loss, test_loss=test_loss))
+        print('Validated train/val/test loss: %.4f/%.4f/%.4f' % (validated_train_loss, best_val_loss, validated_test_loss))
+        print('Training finished in %.2f s' % (time.time()-t0))
         return best_val_loss
 
     def evaluate_epoch(self, epoch, tester_loader, losses, device, logger, **kwargs):
@@ -97,13 +104,13 @@ class ModelBase(nn.Module):
 
         verbose = kwargs.get('verbose', self.evaluate_args.get('verbose', False))
         results_path = kwargs.get('path', self.evaluate_args.get('path'))
+        name = kwargs.get('name', 'test')
         if not results_path:
             if verbose:
                 print("\n%s\nNo path is given, terminating test.\n%s" % ('#*10', '#*10'))
             return
 
         self.eval()
-        nol = len(losses)
 
         test_loss_vals = 0.
         with torch.no_grad():
@@ -123,16 +130,16 @@ class ModelBase(nn.Module):
                     comparison = torch.cat([x[:n],
                                             x_mu.view(x.size())[:n]])
                     save_image(comparison.cpu(),
-                               results_path + '/reconstruction_' + str(epoch) + '.png', nrow=n)
+                               results_path + '/reconstruction_' + name + '_' + str(epoch) + '.png', nrow=n)
 
         test_losses_avg = test_loss_vals / len(tester_loader.sampler)
         test_losses_avg_key_value = list(zip(batch_losses.keys(), test_losses_avg))
         if verbose:
-            print('====> Eval set loss: {}'.format(test_losses_avg_key_value))
+            print('====> {} set loss: {}'.format(name, test_losses_avg_key_value))
 
         if logger:
             for k, v in test_losses_avg_key_value:
-                logger.add_scalar('data/epoch_test_loss_%s' % k, v, epoch)
+                logger.add_scalar('data/epoch_%s_loss_%s' % (name, k), v, epoch)
 
         batch_size = tester_loader.batch_size
         if hasattr(self, 'generate'):
@@ -151,7 +158,7 @@ class ModelBase(nn.Module):
                                results_path + '/sample_' + str(epoch) + '_' + str(i+1) + '.png')
                     if logger:
                         logger.add_embedding(sample_z_list[i].cpu(),
-                                             tag=('data/z_%s_%s'%(epoch, i)),
+                                             tag=('data/z_%s_%s_%s' % (name, epoch, i)),
                                              label_img=x_images)
 
         if verbose:

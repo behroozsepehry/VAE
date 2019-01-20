@@ -57,6 +57,10 @@
     {
       "name": "MNIST",
       "path": "files/datasets/MNIST/",
+      "ratio":
+        {
+            "val": 0.5,
+        },
       "args":
         {
           "batch_size": 128,

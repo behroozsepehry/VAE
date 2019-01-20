@@ -1,10 +1,8 @@
-import numpy as np
-
+import time
 import torch
 
 from models.vae import base
 from utilities import sampler as smp
-from utilities import general_utilities as gu
 
 
 class VaeModelNormalBase(base.VaeModelBase):
@@ -75,11 +73,13 @@ class VaeModelNormalBase(base.VaeModelBase):
         return dict(losses=losses_list_dict)
 
     def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
-        super(VaeModelNormalBase, self).train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
+        t0 = time.time()
+        best_val_loss = super(VaeModelNormalBase, self).train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
         self.load()
         for data_name, data_loader in dataloaders.items():
             sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)
             for i, d in enumerate(sampling_iterations_dataset_losses['losses']):
                 for k, l in d.items():
                     logger.add_scalar('data/sampling_iterations_losses_%s_%s' % (data_name, k), l, i)
-
+        print('Training of VAE Normal finished in %.2f s' % (time.time()-t0))
+        return best_val_loss
