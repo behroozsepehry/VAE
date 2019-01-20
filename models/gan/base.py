@@ -2,6 +2,7 @@ import numpy as np
 
 import models.base
 from utilities import sampler
+from utilities import general_utilities as gu
 
 
 class GanModelBase(models.base.ModelBase):
@@ -35,17 +36,17 @@ class GanModelBase(models.base.ModelBase):
         y_fake = self.discriminator(x_fake.detach())
         d_optim.zero_grad()
         d_loss = d_loss_func(x_real, y_real, x_fake.detach(), y_fake)
-        d_loss.backward()
+        d_loss['loss'].backward()
         d_optim.step()
 
         y_fake = self.discriminator(x_fake)
         g_optim.zero_grad()
         g_loss = g_loss_func(None, None, x_fake, y_fake)
-        g_loss.backward()
+        g_loss['loss'].backward()
         g_optim.step()
 
-        losses = dict(discriminator=d_loss.item(), generator=g_loss.item(),
-                      y_real=y_real.sum().item(), y_fake=y_fake.sum().item())
+        losses = dict(**gu.append_key_dict(d_loss, 'discriminator_'),
+                      **gu.append_key_dict(g_loss, 'generator_'))
         # print(y_real.mean().item(), y_fake.mean().item())
         # print(d_optim.param_groups[0]['params'][0].grad.cpu().numpy())
         # print('######################')

@@ -23,4 +23,5 @@ class Loss(bce_base.BceLossBase):
         l_real, l_fake = self._create_label_tensors(y_real, y_fake)
         bce_real, bce_fake = self._compute_losses(y_real, l_real, y_fake, l_fake)
         loss_discriminator = bce_real + bce_fake
-        return loss_discriminator
+        return dict(loss=loss_discriminator, bce_real=bce_real, bce_fake=bce_fake,
+                    y_real=y_real.sum(), y_fake=y_fake.sum())

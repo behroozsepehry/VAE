@@ -6,3 +6,7 @@ def import_from_path(path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def append_key_dict(d, k):
+    return {k+kk: vv for kk, vv in d.items()}

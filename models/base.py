@@ -4,6 +4,7 @@ import time
 import torch
 from torch import nn
 from torchvision.utils import save_image
+from utilities import general_utilities as gu
 
 
 class ModelBase(nn.Module):
@@ -48,7 +49,7 @@ class ModelBase(nn.Module):
         for batch_idx, (x, _) in enumerate(trainer_loader):
             x = x.to(device)
             model_out = self.forward_backward(x, loss_functions, optimizers)
-            loss_values = np.array(list(model_out['losses'].values()))
+            loss_values = np.array([x.item() for x in model_out['losses'].values()])
             loss_keys = model_out['losses'].keys()
 
             train_losses += loss_values
@@ -95,18 +96,22 @@ class ModelBase(nn.Module):
             if verbose:
                 print("\n%s\nNo path is given, terminating test.\n%s" % ('#*10', '#*10'))
             return
-        self.eval()
 
+        self.eval()
         nol = len(losses)
 
-        test_losses = np.zeros(nol)
+        test_loss_vals = 0.
         with torch.no_grad():
             for batch_idx, (x, _) in enumerate(tester_loader):
                 x = x.to(device)
                 model_out = self(x)
-                losses_v = list(losses.values())
-                for il in range(nol):
-                    test_losses[il] += losses_v[il](**model_out).item()
+                batch_losses = {}
+                for k in losses:
+                    losses_v = losses[k](**model_out)
+                    batch_losses.update(gu.append_key_dict(losses_v, k+'_'))
+
+                test_loss_vals += np.array([x.item() for x in batch_losses.values()])
+
                 if 'vae' in self.name and batch_idx == 0:
                     n = min(x.size(0), 8)
                     x_mu = model_out['x_mu']
@@ -115,8 +120,8 @@ class ModelBase(nn.Module):
                     save_image(comparison.cpu(),
                                results_path + '/reconstruction_' + str(epoch) + '.png', nrow=n)
 
-        test_losses_avg = test_losses / len(tester_loader.dataset)
-        test_losses_avg_key_value = list(zip(losses.keys(), test_losses_avg))
+        test_losses_avg = test_loss_vals / len(tester_loader.dataset)
+        test_losses_avg_key_value = list(zip(batch_losses.keys(), test_losses_avg))
         if verbose:
             print('====> Test set loss: {}'.format(test_losses_avg_key_value))
 
@@ -147,7 +152,7 @@ class ModelBase(nn.Module):
         if verbose:
             print('Time: %.2f s' % (time.time()-t0))
 
-        return dict(losses=test_losses)
+        return dict(losses=test_losses_avg)
 
     def evaluate_model(self, *args, **kwargs):
         return self.evaluate_epoch(*args, **kwargs)

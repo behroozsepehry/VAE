@@ -14,5 +14,6 @@ class Loss(bce_generator.Loss):
         return l_fake
 
     def __call__(self, x_real, y_real, x_fake, y_fake, **kwargs):
-        loss_generator = -super(Loss, self).__call__(x_real, y_real, x_fake, y_fake, **kwargs)
+        loss_generator = super(Loss, self).__call__(x_real, y_real, x_fake, y_fake, **kwargs)
+        loss_generator['loss'] = -loss_generator['loss']
         return loss_generator

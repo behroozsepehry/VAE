@@ -34,7 +34,7 @@
 
   "Optimizers":
     {
-        "model":
+        "vae":
           {
               "name": "Adam",
               "args":
@@ -57,7 +57,7 @@
 
   "Losses":
     {
-        "model":
+        "vae":
           {
               "name": "vae/sparse_mse",
               "l1_weight": 0.000,

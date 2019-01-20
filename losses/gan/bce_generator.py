@@ -21,4 +21,4 @@ class Loss(bce_base.BceLossBase):
         l_fake = self._create_label_tensors(y_fake)
         bce_fake = self._compute_losses(y_fake, l_fake)
         loss_generator = -bce_fake
-        return loss_generator
+        return dict(loss=loss_generator)

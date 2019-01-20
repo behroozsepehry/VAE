@@ -4,6 +4,7 @@ import torch
 
 from models.vae import base
 from utilities import sampler as smp
+from utilities import general_utilities as gu
 
 
 class VaeModelNormalBase(base.VaeModelBase):
@@ -50,8 +51,9 @@ class VaeModelNormalBase(base.VaeModelBase):
         loss_sampling_iterations = range(max_sampling_iterations)
         self.eval()
 
-        losses = np.zeros(len(loss_sampling_iterations))
+        losses_list_dict = []
         with torch.no_grad():
+            loss_epoch = {}
             for batch_idx, (x, _) in enumerate(dataloader):
                 x = x.to(device)
                 z_params = self.encode(x)
@@ -62,8 +64,22 @@ class VaeModelNormalBase(base.VaeModelBase):
                 x_mu_list, z_mu_list = samples['x'], samples['z']
                 for i, iteration in enumerate(loss_sampling_iterations):
                     x_params = self.decode(z_mu_list[i])
-                    loss = loss_function(x=x, **x_params, **z_params)
-                    losses[i] += loss.item()
+                    loss_batch = loss_function(x=x, **x_params, **z_params)
+                    for k in loss_batch:
+                        loss_epoch[k] = loss_epoch.get(k, 0.) + loss_batch[k]
+            losses_list_dict.append(loss_epoch)
 
-        losses /= len(dataloader.dataset)
-        return dict(losses=losses)
+        for i in range(len(losses_list_dict)):
+            for k in losses_list_dict[i]:
+                losses_list_dict[i][k] /= len(dataloader.dataset)
+        return dict(losses=losses_list_dict)
+
+    def train_model(self, device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs):
+        super(VaeModelNormalBase, self).train_model(device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs)
+        self.load()
+        for data_loader, data_name in [(trainer_loader, 'train'), (tester_loader, 'test')]:
+            sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)
+            for i, d in enumerate(sampling_iterations_dataset_losses['losses']):
+                for k, l in d.items():
+                    logger.add_scalar('data/sampling_iterations_losses_%s_%s' % (data_name, k), l, i)
+

@@ -21,4 +21,4 @@ class Loss(base.LossBase):
         # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
         kld = -0.5 * torch.sum(1 + z_logvar - z_mu.pow(2) - z_logvar.exp())
 
-        return mse + kld
+        return dict(loss=mse+kld, mse=mse, kld=kld)

@@ -10,7 +10,9 @@ class Loss(base.LossBase):
 
     # Reconstruction + KL divergence losses summed over all elements and batch
     def __call__(self, x, x_mu, x_logvar, z_2, z_mu, z_logvar, **kwargs):
-        vae_1_loss_val = self.mse_loss(x, x_mu, x_logvar, z_mu, z_logvar)
+        vae_1_loss_vals = self.mse_loss(x, x_mu, x_logvar, z_mu, z_logvar)
         l1 = z_2.abs().sum()/z_2.size(1)
-        loss_val = vae_1_loss_val + self.l1_weight * l1
-        return loss_val
+        l1_loss = self.l1_weight * l1
+        loss_vals = dict(**vae_1_loss_vals, l1=l1_loss)
+        loss_vals['loss'] += l1_loss
+        return loss_vals
