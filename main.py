@@ -16,7 +16,7 @@ def construct_objects(**kwargs):
     model = mu.get_model(**kwargs['Model'])
     model.load(map_location=device)
     model = model.to(device)
-    trainer_loader, tester_loader = mu.get_dataloader(**kwargs['Dataloader'])
+    dataloaders = mu.get_dataloaders(**kwargs['Dataloaders'])
     model_parameters_groups = model.get_parameters_groups()
     optimizers = mu.get_optimizers(model_parameters_groups, **kwargs['Optimizers'])
     losses = mu.get_losses(**kwargs['Losses'])
@@ -26,7 +26,7 @@ def construct_objects(**kwargs):
     if logger:
         logger.add_text('config/config', str(kwargs))
 
-    return device, model, trainer_loader, tester_loader, optimizers, losses, logger
+    return device, model, dataloaders, optimizers, losses, logger
 
 
 def main():
@@ -37,8 +37,8 @@ def main():
     with open(args.conf_path, 'rb') as f:
         kwargs = yaml.load(f)
         objects = construct_objects(**kwargs)
-        device, model, trainer_loader, tester_loader, optimizers, losses, logger = objects
-        model.train_model(device, trainer_loader, tester_loader, optimizers, losses, logger)
+        device, model, dataloaders, optimizers, losses, logger = objects
+        model.train_model(device, dataloaders, optimizers, losses, logger)
         if logger:
             logger.close()
 

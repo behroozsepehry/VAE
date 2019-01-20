@@ -57,11 +57,11 @@ class ModelBase(nn.Module):
                 if batch_idx % log_interval == 0:
                     loss_avg_key_value = list(zip(loss_keys, loss_values / len(x)))
                     print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {}'.format(
-                        epoch, batch_idx * len(x), len(trainer_loader.dataset),
+                        epoch, batch_idx * len(x), len(trainer_loader.sampler),
                         100. * batch_idx / len(trainer_loader),
                         loss_avg_key_value))
 
-        epoch_train_losses = train_losses / len(trainer_loader.dataset)
+        epoch_train_losses = train_losses / len(trainer_loader.sampler)
         epoch_train_loss_avg_key_value = list(zip(loss_keys, epoch_train_losses))
         if verbose:
             print('====> Epoch: {} Average loss: {}'.format(
@@ -74,18 +74,23 @@ class ModelBase(nn.Module):
 
         return dict(losses=epoch_train_losses)
 
-    def train_model(self, device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs):
+    def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
         n_epochs = kwargs.get('n_epochs', self.train_args['n_epochs'])
 
-        test_loss = self.evaluate_epoch(0, tester_loader, losses, device, logger)
-        best_train_loss = np.inf
+        test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger)['losses'][0]
+        val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger)['losses'][0]
+
+        best_val_loss = val_loss
         for epoch in range(1, n_epochs + 1):
-            train_losses = self.train_epoch(epoch, optimizers, trainer_loader, losses, device, logger)
-            train_loss = train_losses['losses'][0]
-            if train_loss < best_train_loss:
-                best_train_loss = train_loss
-                self.save(save_data=dict(epoch=epoch))
-            test_loss = self.evaluate_epoch(epoch, tester_loader, losses, device, logger)
+            train_loss = self.train_epoch(epoch, optimizers, dataloaders['train'], losses, device, logger)['losses'][0]
+            test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger)['losses'][0]
+            val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger)['losses'][0]
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                self.save(save_data=dict(epoch=epoch,
+                                         train_loss=train_loss, val_loss=val_loss, test_loss=test_loss))
+        return best_val_loss
 
     def evaluate_epoch(self, epoch, tester_loader, losses, device, logger, **kwargs):
         t0 = time.time()
@@ -120,10 +125,10 @@ class ModelBase(nn.Module):
                     save_image(comparison.cpu(),
                                results_path + '/reconstruction_' + str(epoch) + '.png', nrow=n)
 
-        test_losses_avg = test_loss_vals / len(tester_loader.dataset)
+        test_losses_avg = test_loss_vals / len(tester_loader.sampler)
         test_losses_avg_key_value = list(zip(batch_losses.keys(), test_losses_avg))
         if verbose:
-            print('====> Test set loss: {}'.format(test_losses_avg_key_value))
+            print('====> Eval set loss: {}'.format(test_losses_avg_key_value))
 
         if logger:
             for k, v in test_losses_avg_key_value:

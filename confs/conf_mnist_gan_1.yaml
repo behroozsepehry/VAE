@@ -53,7 +53,7 @@
     },
 
 
-  "Dataloader":
+  "Dataloaders":
     {
       "name": "MNIST",
       "path": "files/datasets/MNIST/",

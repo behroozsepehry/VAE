@@ -1,6 +1,9 @@
+import numpy as np
+
 import torch
 from torch import optim
 from torchvision import datasets, transforms
+from torch.utils.data.sampler import SubsetRandomSampler
 
 from utilities import general_utilities
 
@@ -36,18 +39,36 @@ def get_optimizers(parameters_groups, **kwargs):
     return {k: get_optimizer(parameters_groups[k], **v) for k, v in kwargs.items()}
 
 
-def get_dataloader(**kwargs):
+def get_dataloaders(**kwargs):
     dataset_path = kwargs['path']
     dataset_name = kwargs['name']
     dataset_constructor = getattr(datasets, dataset_name)
-    trainer_loader = torch.utils.data.DataLoader(
-        dataset_constructor(dataset_path, train=True, download=True,  transform=transforms.ToTensor()),
-        **kwargs['args'])
-    tester_loader = torch.utils.data.DataLoader(
-        dataset_constructor(dataset_path, train=False, transform=transforms.ToTensor()),
-        **kwargs['args'])
 
-    return trainer_loader, tester_loader
+    dataset_eval = dataset_constructor(dataset_path, train=False, download=True, transform=transforms.ToTensor())
+    dataset_eval_size = len(dataset_eval)
+    idxs = range(dataset_eval_size)
+    val_ratio = kwargs['ratio'].get('val', 1. - kwargs['ratio'].get('test', 1.))
+    split_idx = int(np.floor(val_ratio * dataset_eval_size))
+    val_idxs = idxs[:split_idx]
+    test_idxs = idxs[split_idx:]
+    val_sampler = SubsetRandomSampler(val_idxs)
+    test_sampler = SubsetRandomSampler(test_idxs)
+
+    dataloaders = {
+        'train': torch.utils.data.DataLoader(
+            dataset_constructor(dataset_path, train=True, download=True,  transform=transforms.ToTensor()),
+            **kwargs['args']),
+        'test': torch.utils.data.DataLoader(
+            dataset_eval,
+            sampler=test_sampler,
+            **dict(kwargs['args'], shuffle=False)),
+        'val': torch.utils.data.DataLoader(
+            dataset_eval,
+            sampler=val_sampler,
+            **dict(kwargs['args'], shuffle=False)),
+    }
+
+    return dataloaders
 
 
 def get_losses(**kwargs):

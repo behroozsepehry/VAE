@@ -71,13 +71,13 @@ class VaeModelNormalBase(base.VaeModelBase):
 
         for i in range(len(losses_list_dict)):
             for k in losses_list_dict[i]:
-                losses_list_dict[i][k] /= len(dataloader.dataset)
+                losses_list_dict[i][k] /= len(dataloader.sampler)
         return dict(losses=losses_list_dict)
 
-    def train_model(self, device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs):
-        super(VaeModelNormalBase, self).train_model(device, trainer_loader, tester_loader, optimizers, losses, logger, **kwargs)
+    def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
+        super(VaeModelNormalBase, self).train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
         self.load()
-        for data_loader, data_name in [(trainer_loader, 'train'), (tester_loader, 'test')]:
+        for data_name, data_loader in dataloaders.items():
             sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)
             for i, d in enumerate(sampling_iterations_dataset_losses['losses']):
                 for k, l in d.items():
