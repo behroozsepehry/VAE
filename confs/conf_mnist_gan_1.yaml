@@ -4,11 +4,12 @@
 
   "Model":
     {
-        "name": "gan/mnist_fc_1",
+        "name": "gan/mnist_cnn_1",
+        "mid_channels": 10,
         "z_args":
           {
               "z_dim": 20,
-              "name": "uniform_int",
+              "name": "standard_normal",
               "high": 10,
           },
       #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
@@ -22,7 +23,7 @@
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/MNIST/gan_bce_mnist_fc_discrete",
+              "path": "files/results/MNIST/gan_bce_mnist_cnn_normal",
           },
     },
 
@@ -87,7 +88,7 @@
         "name": "tensorboard",
         "args":
           {
-              "log_dir": "files/results/MNIST/gan_bce_mnist_fc_discrete/logs/exp-1",
+              "log_dir": "files/results/MNIST/gan_bce_mnist_cnn_normal/logs/exp-1",
           }
     }
 }
