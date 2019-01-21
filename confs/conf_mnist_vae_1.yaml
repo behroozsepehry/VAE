@@ -4,7 +4,8 @@
 
   "Model":
     {
-        "name": "vae/mnist_simple_fc_normal_1",
+        "name": "vae/mnist_cnn_normal_1",
+        "mid_channels": 10,
         "z_args":
         {
             "z_dim": 20,
@@ -15,14 +16,14 @@
       #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
         "train_args":
           {
-              "n_epochs": 10,
+              "n_epochs": 100,
               "verbose": True,
               "log_interval": 20,
           },
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/MNIST/vae_mse_fc_repeat_3",
+              "path": "files/results/MNIST/vae_mse_cnn_repeat_3",
           },
     },
 
@@ -72,7 +73,7 @@
         "name": "tensorboard",
         "args":
           {
-              "log_dir": "files/results/MNIST/vae_mse_fc_repeat_3/logs/exp-1",
+              "log_dir": "files/results/MNIST/vae_mse_cnn_repeat_3/logs/exp-1",
           }
     },
 }
