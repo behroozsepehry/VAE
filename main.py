@@ -31,7 +31,7 @@ def construct_objects(**kwargs):
 
 def main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
-    parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_vae_1.yaml', metavar='N',
+    parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_vae_sparse_1.yaml', metavar='N',
                         help='configuration file path')
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:

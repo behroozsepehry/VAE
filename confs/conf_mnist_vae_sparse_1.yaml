@@ -23,7 +23,7 @@
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/MNIST/vae_mse_fc_sparse_l1_0.1_repeat_3",
+              "path": "files/results/MNIST/vae_mse_fc_sparse_l1_0.01_repeat_3",
           },
     },
 
@@ -67,7 +67,8 @@
         "vae":
           {
               "name": "vae/sparse_mse",
-              "l1_weight": 0.1,
+              "l1_weight": 0.01,
+              "tol": 0.1,
           },
     },
 
@@ -82,7 +83,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/MNIST/vae_mse_fc_sparse_l1_0.1_repeat_3/logs/exp-1",
+              "log_dir": "files/results/MNIST/vae_mse_fc_sparse_l1_0.01_repeat_3/logs/exp-1",
           }
     },
 }
