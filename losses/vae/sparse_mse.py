@@ -18,5 +18,6 @@ class Loss(base.LossBase):
         l1_loss = self.l1_weight * l1
         nz = torch.sum(z_2 < tol)
         loss_vals = dict(**vae_1_loss_vals, l1=l1_loss, nz=nz)
+        loss_vals['mse_kld'] = loss_vals['loss']
         loss_vals['loss'] += l1_loss
         return loss_vals
