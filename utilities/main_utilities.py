@@ -91,6 +91,7 @@ def get_logger(**kwargs):
     if kwargs['name'] == 'tensorboard':
         from tensorboardX import SummaryWriter
         logger = SummaryWriter(**kwargs['args'])
+        logger.flags = kwargs.get('flags', {})
     elif not kwargs['name']:
         logger = None
     else:

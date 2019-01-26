@@ -46,7 +46,7 @@ class VaeModelNormalBase(base.VaeModelBase):
         sampling_iterations = kwargs.get('sampling_iterations', self.sampling_iterations)
         assert hasattr(sampling_iterations, '__len__')
         max_sampling_iterations = max(sampling_iterations)
-        loss_sampling_iterations = range(max_sampling_iterations)
+        loss_sampling_iterations = range(max_sampling_iterations+1)
         self.eval()
 
         losses_list_dict = []
@@ -76,10 +76,11 @@ class VaeModelNormalBase(base.VaeModelBase):
         t0 = time.time()
         best_val_loss = super(VaeModelNormalBase, self).train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
         self.load()
-        for data_name, data_loader in dataloaders.items():
-            sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)
-            for i, d in enumerate(sampling_iterations_dataset_losses['losses']):
-                for k, l in d.items():
-                    logger.add_scalar('data/sampling_iterations_losses_%s_%s' % (data_name, k), l, i)
+        if logger and logger.flags.get('loss'):
+            for data_name, data_loader in dataloaders.items():
+                sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)
+                for i, d in enumerate(sampling_iterations_dataset_losses['losses']):
+                    for k, l in d.items():
+                        logger.add_scalar('loss/sampling_iterations_%s_%s' % (data_name, k), l, i)
         print('Training of VAE Normal finished in %.2f s' % (time.time()-t0))
         return best_val_loss

@@ -56,6 +56,8 @@
         {
           "batch_size": 128,
           "shuffle": True,
+          "pin_memory": True,
+          "num_workers": 4,
         },
     },
 
@@ -71,6 +73,12 @@
   "Logger":
     {
         "name": "tensorboard",
+        "flags":
+          {
+              "loss": True,
+              "data": False,
+              "conf": True,
+          },
         "args":
           {
               "log_dir": "files/results/MNIST/vae_mse_fc_sparse_l1_0.1_repeat_3/logs/exp-1",

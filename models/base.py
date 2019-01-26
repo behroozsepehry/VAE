@@ -68,9 +68,9 @@ class ModelBase(nn.Module):
                 epoch, epoch_train_loss_avg_key_value))
             print('Time: %.2f s' % (time.time()-t0))
 
-        if logger:
+        if logger and logger.flags.get('loss'):
             for (k, v) in epoch_train_loss_avg_key_value:
-                logger.add_scalar('data/epoch_train_loss_%s' % k, v, epoch)
+                logger.add_scalar('loss/train_%s' % k, v, epoch)
 
         return dict(losses=epoch_train_losses)
 
@@ -137,9 +137,9 @@ class ModelBase(nn.Module):
         if verbose:
             print('====> {} set loss: {}'.format(name, test_losses_avg_key_value))
 
-        if logger:
+        if logger and logger.flags.get('loss'):
             for k, v in test_losses_avg_key_value:
-                logger.add_scalar('data/epoch_%s_loss_%s' % (name, k), v, epoch)
+                logger.add_scalar('loss/%s_%s' % (name, k), v, epoch)
 
         batch_size = tester_loader.batch_size
         if hasattr(self, 'generate'):
@@ -156,7 +156,7 @@ class ModelBase(nn.Module):
                     x_images = s.cpu().view((batch_size,) + x.size()[1:])
                     save_image(x_images,
                                results_path + '/sample_' + str(epoch) + '_' + str(i+1) + '.png')
-                    if logger:
+                    if logger and logger.flags.get('data'):
                         logger.add_embedding(sample_z_list[i].cpu(),
                                              tag=('data/z_%s_%s_%s' % (name, epoch, i)),
                                              label_img=x_images)

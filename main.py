@@ -23,8 +23,8 @@ def construct_objects(**kwargs):
     assert losses.keys() == optimizers.keys()
     logger = mu.get_logger(**kwargs['Logger'])
 
-    if logger:
-        logger.add_text('config/config', str(kwargs))
+    if logger and logger.flags.get('conf'):
+        logger.add_text('conf/conf', str(kwargs))
 
     return device, model, dataloaders, optimizers, losses, logger
 
