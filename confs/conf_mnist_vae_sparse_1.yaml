@@ -1,6 +1,7 @@
 {
   # The higher level names must be same as the class name!
   "seed": 0,
+  "function": "hypertune",
 
   "Model":
     {
@@ -75,7 +76,7 @@
 
   "Logger":
     {
-        "name": "tensorboard",
+        "name": "",
         "flags":
           {
               "loss": True,
@@ -87,4 +88,25 @@
               "log_dir": "files/results/MNIST/vae_mse_fc_sparse_test/logs/exp-1",
           }
     },
+
+    "Hypertune":
+    {
+        "params":
+          {
+              "Model":
+                {
+                    "z_args":
+                      {
+                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1],
+                      },
+                },
+              "Losses":
+                {
+                    "vae":
+                      {
+                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1],
+                      },
+                },
+          }
+    }
 }
