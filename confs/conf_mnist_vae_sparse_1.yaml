@@ -6,7 +6,7 @@
   "Model":
     {
         "name": "vae/mnist_cnn_normal_1_sparse_2",
-        "mid_channels": 20,
+        "mid_channels": 10,
         "z_args":
         {
             "z_dim": 20,
@@ -97,14 +97,14 @@
                 {
                     "z_args":
                       {
-                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1],
+                          "threshold": [0.0],
                       },
                 },
               "Losses":
                 {
                     "vae":
                       {
-                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1],
+                          "l1_weight": [0.0],
                       },
                 },
           }

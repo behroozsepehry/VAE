@@ -12,7 +12,7 @@ class NormalSparseBase2(normal_sparse_base.NormalSparseBase):
         if self.training:
             z_2 = h1
         else:
-            z_2 = torch.where(h1 > self.z_args['threshold'], h1, torch.tensor([0.], device=h1.device))
+            z_2 = torch.where(h1.abs() > self.z_args['threshold'], h1, torch.tensor([0.], device=h1.device))
         z_d = self.fc_d_2(z_2)
         return dict(z_d=z_d, z_2=z_2)
 
