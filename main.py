@@ -70,6 +70,8 @@ def hypertune(settings):
         mu = np.mean(vals)
         std = np.std(vals)
         if mu < best_mu:
+            # p_value for hypothesis of whether the best and second best hypeparameter are similar
+            # 0 means very dissimilar
             p_val = 2. * (1. - dist.cdf(np.abs((mu - best_mu) / np.linalg.norm([std, best_std]))))
             best_mu = mu
             best_std = std
