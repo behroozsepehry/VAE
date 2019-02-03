@@ -3,6 +3,7 @@ import yaml
 import itertools
 import copy
 import numpy as np
+from scipy import stats
 
 import torch
 
@@ -59,23 +60,25 @@ def hypertune(settings):
     hypertune_params_settings_list_sizes_lists = [range(s) for s in hypertune_params_settings_list_sizes]
     all_possible_choices = itertools.product(*hypertune_params_settings_list_sizes_lists)
 
-    best_val = np.inf
+    best_mu = np.inf
+    best_std = 0.
+    dist = stats.norm()
     for choice in all_possible_choices:
         train_settings = copy.deepcopy(settings)
         gu.choose_1_from_dict_of_lists(hypertune_params_settings, choice, train_settings)
         vals = train(train_settings)
-        val = np.mean(vals)
+        mu = np.mean(vals)
         std = np.std(vals)
-        if val < best_val:
-            #TODO!!! p_val =
-            best_val = val
+        if mu < best_mu:
+            p_val = 2. * (1. - dist.cdf(np.abs((mu - best_mu) / np.linalg.norm([std, best_std]))))
+            best_mu = mu
             best_std = std
             best_choice = copy.deepcopy(choice)
 
     best_hyperparams = copy.deepcopy(hypertune_params_settings)
     gu.choose_1_from_dict_of_lists(hypertune_params_settings, best_choice, best_hyperparams)
 
-    return dict(best_hyperparams=best_hyperparams, best_val=best_val)
+    return dict(best_hyperparams=best_hyperparams, best_mu=best_mu, best_std=best_std, p_val=p_val)
 
 
 def main():

@@ -1,6 +1,6 @@
 {
   # The higher level names must be same as the class name!
-  "seed": 1,
+  "seeds": [0,1,2,3,4],
   "function": "hypertune",
 
   "Model":
@@ -18,7 +18,7 @@
       #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
         "train_args":
           {
-              "n_epochs": 3,
+              "n_epochs": 20,
               "verbose": True,
               "log_interval": 40,
           },
@@ -97,14 +97,14 @@
                 {
                     "z_args":
                       {
-                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
+                          "threshold": [0.0, 0.0001],
                       },
                 },
               "Losses":
                 {
                     "vae":
                       {
-                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
+                          "l1_weight": [0.0, 0.0001],
                       },
                 },
           }
