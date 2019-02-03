@@ -32,13 +32,24 @@ def construct_objects(settings):
     return device, model, dataloaders, optimizers, losses, logger
 
 
-def train(settings):
+def train_seed(settings):
     objects = construct_objects(settings)
     device, model, dataloaders, optimizers, losses, logger = objects
     result = model.train_model(device, dataloaders, optimizers, losses, logger)
     if logger:
         logger.close()
     return result
+
+
+def train(settings):
+    seeds = settings.get('seeds', [settings.get('seed', 0)])
+    results = []
+    for s in seeds:
+        train_settings = copy.deepcopy(settings)
+        train_settings['seed'] = s
+        r = train_seed(train_settings)
+        results.append(r)
+    return results
 
 
 def hypertune(settings):
@@ -48,14 +59,17 @@ def hypertune(settings):
     hypertune_params_settings_list_sizes_lists = [range(s) for s in hypertune_params_settings_list_sizes]
     all_possible_choices = itertools.product(*hypertune_params_settings_list_sizes_lists)
 
-    best_choice = None
     best_val = np.inf
     for choice in all_possible_choices:
         train_settings = copy.deepcopy(settings)
         gu.choose_1_from_dict_of_lists(hypertune_params_settings, choice, train_settings)
-        val = train(train_settings)
+        vals = train(train_settings)
+        val = np.mean(vals)
+        std = np.std(vals)
         if val < best_val:
+            #TODO!!! p_val =
             best_val = val
+            best_std = std
             best_choice = copy.deepcopy(choice)
 
     best_hyperparams = copy.deepcopy(hypertune_params_settings)
