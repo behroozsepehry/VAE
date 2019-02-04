@@ -4,7 +4,8 @@ import time
 import torch
 from torch import nn
 from torchvision.utils import save_image
-from utilities import general_utilities as gu
+from utilities import general_utilities as g_util
+from utilities import main_utilities as m_util
 
 
 class ModelBase(nn.Module):
@@ -15,6 +16,7 @@ class ModelBase(nn.Module):
         self.name = kwargs.get('name')
         self.train_args = kwargs.get('train_args', {})
         self.evaluate_args = kwargs.get('evaluate_args', {})
+        self.model = m_util.get_model(**kwargs.get(m_util.RECURSION_CHAR, {}))
 
     def load(self, path=None, **kwargs):
         if not path:
@@ -120,7 +122,7 @@ class ModelBase(nn.Module):
                 batch_losses = {}
                 for k in losses:
                     losses_v = losses[k](**model_out)
-                    batch_losses.update(gu.append_key_dict(losses_v, k+'_'))
+                    batch_losses.update(g_util.append_key_dict(losses_v, k+'_'))
 
                 test_loss_vals += np.array([x.item() for x in batch_losses.values()])
 

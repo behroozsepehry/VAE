@@ -7,10 +7,12 @@ from torch.utils.data.sampler import SubsetRandomSampler
 
 from utilities import general_utilities
 
+RECURSION_CHAR = '.'
+
 
 def get_instance(folder, instance_type, **kwargs):
     kwargs_instance = kwargs
-    instance_filename = kwargs_instance['name']
+    instance_filename = kwargs_instance.get('name')
     if not instance_filename:
         instance = None
     else:
@@ -20,7 +22,10 @@ def get_instance(folder, instance_type, **kwargs):
 
 
 def get_instances_dict(folder, instance_type, **kwargs):
-    return {k: get_instance(folder, instance_type, **v) for k, v in kwargs.items()}
+    result = {k: get_instance(folder, instance_type, **v) for k, v in kwargs.items() if k != RECURSION_CHAR}
+    if RECURSION_CHAR in kwargs:
+        result[RECURSION_CHAR] = get_instances_dict(folder, instance_type, **kwargs[RECURSION_CHAR])
+    return result
 
 
 def get_model(**kwargs):
@@ -36,7 +41,10 @@ def get_optimizer(parameters, **kwargs):
 
 def get_optimizers(parameters_groups, **kwargs):
     assert parameters_groups.keys() == kwargs.keys()
-    return {k: get_optimizer(parameters_groups[k], **v) for k, v in kwargs.items()}
+    result = {k: get_optimizer(parameters_groups[k], **v) for k, v in kwargs.items() if k != RECURSION_CHAR}
+    if RECURSION_CHAR in kwargs:
+        result[RECURSION_CHAR] = get_optimizers(parameters_groups[RECURSION_CHAR], **kwargs[RECURSION_CHAR])
+    return result
 
 
 def get_dataloaders(**kwargs):

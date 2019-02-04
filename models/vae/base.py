@@ -1,5 +1,6 @@
 import models.base
-from utilities import general_utilities as gu
+from utilities import general_utilities as g_util
+from utilities import main_utilities as m_util
 
 
 class VaeModelBase(models.base.ModelBase):
@@ -25,17 +26,23 @@ class VaeModelBase(models.base.ModelBase):
         z_params = self.encode(x)
         z_r = self.reparameterize(**z_params)
         x_params = self.decode(z_r['z'])
-        return dict(x=x, **x_params, **z_params)
+        return dict(x=x, **x_params, **z_params, **z_r)
 
     def forward_backward(self, x, loss_functions, optimizers, **kwargs):
         model_out = self(x)
         train_batch_losses = {}
         for k in loss_functions:
-            optimizers[k].zero_grad()
-            loss_vals = loss_functions[k](**model_out)
-            loss_vals['loss'].backward()
-            train_batch_losses.update(gu.append_key_dict(loss_vals, k+'_'))
-            optimizers[k].step()
+            if k != m_util.RECURSION_CHAR:
+                optimizers[k].zero_grad()
+                loss_vals = loss_functions[k](**model_out)
+                loss_vals['loss'].backward()
+                train_batch_losses.update(g_util.append_key_dict(loss_vals, k+'_'))
+                optimizers[k].step()
+            else:
+                self.model(model_out['z'],
+                           loss_functions[m_util.RECURSION_CHAR],
+                           optimizers[m_util.RECURSION_CHAR],
+                           **kwargs[m_util.RECURSION_CHAR])
         return dict(losses=train_batch_losses)
 
     def get_parameters_groups(self):
