@@ -51,7 +51,7 @@ class ModelBase(nn.Module):
         for batch_idx, (x, _) in enumerate(trainer_loader):
             x = x.to(device)
             model_out = self.forward_backward(x, loss_functions, optimizers)
-            loss_values = np.array([x.item() for x in model_out['losses'].values()])
+            loss_values = np.array([x.item() if type(x) != dict else np.nan for x in model_out['losses'].values()])
             loss_keys = model_out['losses'].keys()
 
             train_losses += loss_values

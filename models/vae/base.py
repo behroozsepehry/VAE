@@ -39,7 +39,7 @@ class VaeModelBase(models.base.ModelBase):
                 train_batch_losses.update(g_util.append_key_dict(loss_vals, k+'_'))
                 optimizers[k].step()
             else:
-                inner_model_losses = self.inner_model.forward_backward(model_out['z'],
+                inner_model_losses = self.inner_model.forward_backward(model_out['z'].detach(),
                                                   loss_functions[m_util.RECURSION_CHAR],
                                                   optimizers[m_util.RECURSION_CHAR],
                                                   **kwargs.get(m_util.RECURSION_CHAR, {}))

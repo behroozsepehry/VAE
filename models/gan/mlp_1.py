@@ -9,5 +9,5 @@ class Model(base.GanModelBase):
         d_layer_sizes = kwargs.get('d_layer_sizes')
         assert g_layer_sizes[0] == self.z_args['z_dim']
         assert d_layer_sizes[-1] == 1
-        self.discriminator = mlp.Model(d_layer_sizes)
+        self.discriminator = mlp.Model(d_layer_sizes, activation='Sigmoid')
         self.generator = mlp.Model(g_layer_sizes)
