@@ -1,6 +1,7 @@
 {
   # The higher level names must be same as the class name!
   "seed": 0,
+  "function": "train",
 
   "Model":
     {
@@ -16,8 +17,9 @@
       #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
         ".":
           {
-              "name": "gan/mnist_cnn_1",
-              "mid_channels": 20,
+              "name": "gan/mlp_1",
+              "g_layer_sizes": [20, 50, 50, 20],
+              "d_layer_sizes": [20, 50, 50, 1],
               "z_args":
                 {
                     "z_dim": 20,

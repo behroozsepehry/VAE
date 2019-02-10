@@ -20,7 +20,11 @@ class VaeModelNormalBase(base.VaeModelBase):
 
     def generate(self, device, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
-        z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
+        if self.inner_model:
+            samples = self.inner_model.generate(device, **kwargs)
+            z = samples['x']
+        else:
+            z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
         samples = self.do_sampling_iterations(z, device, **kwargs)
         return samples
 

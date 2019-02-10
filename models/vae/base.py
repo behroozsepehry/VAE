@@ -39,11 +39,15 @@ class VaeModelBase(models.base.ModelBase):
                 train_batch_losses.update(g_util.append_key_dict(loss_vals, k+'_'))
                 optimizers[k].step()
             else:
-                self.model(model_out['z'],
-                           loss_functions[m_util.RECURSION_CHAR],
-                           optimizers[m_util.RECURSION_CHAR],
-                           **kwargs[m_util.RECURSION_CHAR])
+                inner_model_losses = self.inner_model.forward_backward(model_out['z'],
+                                                  loss_functions[m_util.RECURSION_CHAR],
+                                                  optimizers[m_util.RECURSION_CHAR],
+                                                  **kwargs.get(m_util.RECURSION_CHAR, {}))
+        train_batch_losses[m_util.RECURSION_CHAR] = inner_model_losses
         return dict(losses=train_batch_losses)
 
     def get_parameters_groups(self):
-        return {'vae': self.parameters()}
+        p_group = {'vae': self.parameters()}
+        if self.inner_model:
+            p_group[m_util.RECURSION_CHAR] = self.inner_model.get_parameters_groups()
+        return p_group

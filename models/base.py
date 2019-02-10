@@ -16,7 +16,7 @@ class ModelBase(nn.Module):
         self.name = kwargs.get('name')
         self.train_args = kwargs.get('train_args', {})
         self.evaluate_args = kwargs.get('evaluate_args', {})
-        self.model = m_util.get_model(**kwargs.get(m_util.RECURSION_CHAR, {}))
+        self.inner_model = m_util.get_model(**kwargs.get(m_util.RECURSION_CHAR, {}))
 
     def load(self, path=None, **kwargs):
         if not path:
@@ -121,8 +121,9 @@ class ModelBase(nn.Module):
                 model_out = self(x)
                 batch_losses = {}
                 for k in losses:
-                    losses_v = losses[k](**model_out)
-                    batch_losses.update(g_util.append_key_dict(losses_v, k+'_'))
+                    if k != m_util.RECURSION_CHAR:
+                        losses_v = losses[k](**model_out)
+                        batch_losses.update(g_util.append_key_dict(losses_v, k+'_'))
 
                 test_loss_vals += np.array([x.item() for x in batch_losses.values()])
 

@@ -18,7 +18,7 @@
       #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
         "train_args":
           {
-              "n_epochs": 20,
+              "n_epochs": 10,
               "verbose": True,
               "log_interval": 40,
           },
@@ -59,7 +59,7 @@
         {
           "batch_size": 128,
           "shuffle": True,
-          "pin_memory": True,
+          "pin_memory": False,
           "num_workers": 4,
         },
     },
@@ -97,14 +97,14 @@
                 {
                     "z_args":
                       {
-                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
                       },
                 },
               "Losses":
                 {
                     "vae":
                       {
-                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
                       },
                 },
           }

@@ -1,6 +1,7 @@
 {
   # The higher level names must be same as the class name!
   "seed": 0,
+  "function": "train",
 
   "Model":
     {
