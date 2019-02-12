@@ -43,7 +43,7 @@ class VaeModelBase(models.base.ModelBase):
                                                   loss_functions[m_util.RECURSION_CHAR],
                                                   optimizers[m_util.RECURSION_CHAR],
                                                   **kwargs.get(m_util.RECURSION_CHAR, {}))
-        train_batch_losses[m_util.RECURSION_CHAR] = inner_model_losses
+                train_batch_losses[m_util.RECURSION_CHAR] = inner_model_losses
         return dict(losses=train_batch_losses)
 
     def get_parameters_groups(self):
