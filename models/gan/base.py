@@ -8,10 +8,10 @@ from utilities import general_utilities as g_util
 class GanModelBase(models.base.ModelBase):
     def __init__(self, *args, **kwargs):
         super(GanModelBase, self).__init__(*args, **kwargs)
-        self.z_args = kwargs['z_args']
+        self.z_args = kwargs.get('z_args')
         self.discriminator = None
         self.generator = None
-        self.z_generator = sampler.Sampler(**kwargs['z_args'])
+        self.z_generator = sampler.Sampler(**kwargs.get('z_args', {}))
 
     def generate(self, device, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
