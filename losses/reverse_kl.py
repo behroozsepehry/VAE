@@ -1,13 +1,15 @@
 from utilities import general_utilities as g_util
 from utilities import main_utilities as m_util
+from utilities import nn_utilities as nn_util
 from losses import base as loss_base
 from losses.gan import bce_discriminator
+from losses.gan import reverse_kl_generator
 from models.gan import base as gan_base
 
 
-class Discriminator(gan_base.GanModelBase):
+class GanFixedG(gan_base.GanModelBase):
     def __init__(self, generator, discriminator, optim_args):
-        super(Discriminator, self).__init__()
+        super(GanFixedG, self).__init__()
         self.discriminator = discriminator
         self.generator = generator
         self.loss_func = bce_discriminator.Loss()
@@ -34,7 +36,9 @@ class Discriminator(gan_base.GanModelBase):
 class Loss(loss_base.LossBase):
     def __init__(self, generator, discriminator, optim_args):
         super(Loss, self).__init__()
-        self.model = Discriminator(generator, discriminator, optim_args)
+        self.gan_fixed_g = GanFixedG(generator, discriminator, optim_args)
 
     def __call__(self, device, dataloaders, optimizers, losses, logger, **kwargs):
-        raise NotImplementedError
+        self.gan_fixed_g.train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
+        result = nn_util.apply_func_to_model_data(self.gan_fixed_g, reverse_kl_generator.Loss(), dataloaders['train'], device)
+        return result

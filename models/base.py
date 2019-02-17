@@ -103,6 +103,8 @@ class ModelBase(nn.Module):
 
     def evaluate_epoch(self, epoch, tester_loader, losses, device, logger, **kwargs):
         t0 = time.time()
+        if not tester_loader:
+            return dict(losses=[np.inf])
 
         verbose = kwargs.get('verbose', self.evaluate_args.get('verbose', False))
         results_path = kwargs.get('path', self.evaluate_args.get('path'))
