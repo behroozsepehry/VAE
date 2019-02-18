@@ -30,13 +30,18 @@ def construct_objects(settings):
     if logger and logger.flags.get('conf'):
         logger.add_text('conf/conf', str(settings))
 
-    return device, model, dataloaders, optimizers, losses, logger
+    evaluator = m_util.get_evaluator(generator=model, device=device, dataloaders={'train': dataloaders['val']},
+                                     **settings['Evaluator'])
+    return device, model, dataloaders, optimizers, losses, logger, evaluator
 
 
 def train_seed(settings):
     objects = construct_objects(settings)
-    device, model, dataloaders, optimizers, losses, logger = objects
+    device, model, dataloaders, optimizers, losses, logger, evaluator = objects
     result = model.train_model(device, dataloaders, optimizers, losses, logger)
+    if evaluator:
+        eval = evaluator(**settings['Evaluator'])
+        print('%s\nEvaluated: %s\n%s' % ('#'*10, eval, '#'*10))
     if logger:
         logger.close()
     return result
@@ -85,7 +90,7 @@ def hypertune(settings):
 
 def main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
-    parser.add_argument('--conf-path', '-c', type=str, default='confs/conf_mnist_vae_sparse_1.yaml', metavar='N',
+    parser.add_argument('--conf-path', '-c', type=str, default='confs/mnist_vae.yaml', metavar='N',
                         help='configuration file path')
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:

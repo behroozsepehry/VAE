@@ -78,18 +78,18 @@ class ModelBase(nn.Module):
 
     def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
         t0 = time.time()
-        n_epochs = kwargs.get('n_epochs', self.train_args['n_epochs'])
+        n_epochs = kwargs.get('n_epochs', self.train_args.get('n_epochs'))
 
-        test_loss = self.evaluate_epoch(0, dataloaders['test'], losses, device, logger, name='test')['losses'][0]
-        val_loss = self.evaluate_epoch(0, dataloaders['val'], losses, device, logger, name='val')['losses'][0]
+        test_loss = self.evaluate_epoch(0, dataloaders.get('test'), losses, device, logger, name='test')['losses'][0]
+        val_loss = self.evaluate_epoch(0, dataloaders.get('val'), losses, device, logger, name='val')['losses'][0]
 
         best_val_loss = val_loss
         validated_test_loss = test_loss
         validated_train_loss = np.inf
         for epoch in range(1, n_epochs + 1):
             train_loss = self.train_epoch(epoch, optimizers, dataloaders['train'], losses, device, logger)['losses'][0]
-            test_loss = self.evaluate_epoch(epoch, dataloaders['test'], losses, device, logger, name='test')['losses'][0]
-            val_loss = self.evaluate_epoch(epoch, dataloaders['val'], losses, device, logger, name='val')['losses'][0]
+            test_loss = self.evaluate_epoch(epoch, dataloaders.get('test'), losses, device, logger, name='test')['losses'][0]
+            val_loss = self.evaluate_epoch(epoch, dataloaders.get('val'), losses, device, logger, name='val')['losses'][0]
 
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
@@ -149,7 +149,7 @@ class ModelBase(nn.Module):
         batch_size = tester_loader.batch_size
         if hasattr(self, 'generate'):
             with torch.no_grad():
-                samples = self.generate(device, n_samples=batch_size)
+                samples = self.generate(device, n_samples=batch_size, do_sampling_iterations=True)
                 sample_x, sample_z = samples['x'], samples['z']
                 if type(sample_x) != list:
                     sample_x_list = [sample_x]

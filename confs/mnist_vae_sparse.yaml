@@ -1,0 +1,112 @@
+{
+  # The higher level names must be same as the class name!
+  "seeds": [0],
+  "function": "train",
+
+  "Model":
+    {
+        "name": "vae/mnist_cnn_normal_1_sparse_2",
+        "mid_channels": 10,
+        "z_args":
+        {
+            "z_dim": 20,
+            "z2_dim": 200,
+            "threshold": 0.01,
+        },
+        "sampling_iterations": [0],
+      #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
+      #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
+        "train_args":
+          {
+              "n_epochs": 100,
+              "verbose": True,
+              "log_interval": 40,
+          },
+        "evaluate_args":
+          {
+              "verbose": True,
+              "path": "files/results/MNIST/vae_mnist_cnn_normal_1_sparse_2",
+          },
+    },
+
+
+  "Device":
+    {
+        "name": "cuda",
+    },
+
+  "Optimizers":
+    {
+        "vae":
+          {
+              "name": "Adam",
+              "args":
+                {
+                    "lr": 1.0e-3,
+                },
+          },
+    },
+
+  "Dataloaders":
+    {
+      "name": "MNIST",
+      "path": "files/datasets/MNIST/",
+      "ratio":
+        {
+            "val": 0.5,
+        },
+      "args":
+        {
+          "batch_size": 128,
+          "shuffle": True,
+          "pin_memory": False,
+          "num_workers": 4,
+        },
+    },
+
+  "Losses":
+    {
+        "vae":
+          {
+              "name": "vae/sparse_mse",
+              "l1_weight": 0.01,
+              "tol": 0.01,
+          },
+    },
+
+  "Logger":
+    {
+        "name": "",
+        "flags":
+          {
+              "loss": True,
+              "data": False,
+              "conf": True,
+          },
+        "args":
+          {
+              "log_dir": "files/results/MNIST/vae_mnist_cnn_normal_1_sparse_2/logs/exp-1",
+          }
+    },
+
+    "Hypertune":
+    {
+        "params":
+          {
+              "Model":
+                {
+                    "z_args":
+                      {
+                          "threshold": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
+                      },
+                },
+              "Losses":
+                {
+                    "vae":
+                      {
+                          "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
+                      },
+                },
+          }
+    }
+}

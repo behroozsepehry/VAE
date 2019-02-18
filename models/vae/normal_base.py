@@ -20,12 +20,16 @@ class VaeModelNormalBase(base.VaeModelBase):
 
     def generate(self, device, **kwargs):
         n_samples = kwargs.get('n_samples', 1)
+        do_sampling_iterations = kwargs.get('do_sampling_iterations')
         if self.inner_model:
             samples = self.inner_model.generate(device, **kwargs)
             z = samples['x']
         else:
             z = self.z_generator((n_samples, self.z_args['z_dim'])).to(device)
-        samples = self.do_sampling_iterations(z, device, **kwargs)
+        if do_sampling_iterations:
+            samples = self.do_sampling_iterations(z, device, **kwargs)
+        else:
+            samples = {'x': self.decode(z)['x_mu'], 'z': z}
         return samples
 
     def do_sampling_iterations(self, z_mu, device, **kwargs):
@@ -79,7 +83,7 @@ class VaeModelNormalBase(base.VaeModelBase):
     def train_model(self, device, dataloaders, optimizers, losses, logger, **kwargs):
         t0 = time.time()
         best_val_loss = super(VaeModelNormalBase, self).train_model(device, dataloaders, optimizers, losses, logger, **kwargs)
-        self.load()
+        self.load(map_location=device)
         if logger and logger.flags.get('loss'):
             for data_name, data_loader in dataloaders.items():
                 sampling_iterations_dataset_losses = self.get_sampling_iterations_loss(data_loader, losses['vae'], device)

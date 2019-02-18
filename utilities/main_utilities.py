@@ -105,3 +105,7 @@ def get_logger(**kwargs):
     else:
         raise NotImplementedError
     return logger
+
+
+def get_evaluator(**kwargs):
+    return get_instance('evaluator/', 'Evaluator', **kwargs)
