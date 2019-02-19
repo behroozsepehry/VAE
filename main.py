@@ -40,7 +40,7 @@ def train_seed(settings):
     device, model, dataloaders, optimizers, losses, logger, evaluator = objects
     result = model.train_model(device, dataloaders, optimizers, losses, logger)
     if evaluator:
-        eval = evaluator(**settings['Evaluator'])
+        eval = evaluator()
         print('%s\nEvaluated: %s\n%s' % ('#'*10, eval, '#'*10))
     if logger:
         logger.close()

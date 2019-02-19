@@ -41,7 +41,7 @@ class ModelBase(nn.Module):
 
         assert hasattr(optimizers, '__len__')  # check if we have list, tuple, etc of optimizers
         assert hasattr(loss_functions, '__len__')  # check if we have list, tuple, etc of loss_functions
-        assert len(optimizers) == len(loss_functions)
+        assert optimizers.keys() == loss_functions.keys()
 
         log_interval = kwargs.get('log_interval', self.train_args.get('log_interval', 1))
         verbose = kwargs.get('verbose', self.train_args.get('verbose', False))

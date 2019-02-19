@@ -10,8 +10,8 @@ from models.gan import base as gan_base
 
 
 class GanFixedG(gan_base.GanModelBase):
-    def __init__(self, generator, discriminator):
-        super(GanFixedG, self).__init__()
+    def __init__(self, generator, discriminator, **kwargs):
+        super(GanFixedG, self).__init__(**kwargs)
         self.discriminator = discriminator
         self.generator = generator
 
@@ -37,7 +37,7 @@ class GanFixedG(gan_base.GanModelBase):
 
 
 class Evaluator(object):
-    def __init__(self, generator, dataloaders, device, discriminator_args, optim_args, **kwargs):
+    def __init__(self, generator, dataloaders, device, n_samples, discriminator_args, optim_args, **kwargs):
         self.generator = generator
         self.discriminator = m_util.get_model(**discriminator_args)
         self.discriminator.to(device)
@@ -45,22 +45,22 @@ class Evaluator(object):
         self.optimizer = m_util.get_optimizer(self.discriminator.parameters(), **optim_args)
         self.trained = False
         self.device = device
+        self.n_samples = n_samples
+        self.gan_fixed_g = GanFixedG(self.generator, self.discriminator, **kwargs)
+        self.gan_fixed_g.to(self.device)
 
-    def train(self, n_epochs, **kwargs):
+    def train(self):
         if not self.trained:
-            gan_fixed_g = GanFixedG(self.generator, self.discriminator)
-            gan_fixed_g.to(self.device)
-            gan_fixed_g.train_model(self.device, self.dataloaders,
+            self.gan_fixed_g.train_model(self.device, self.dataloaders,
                                     dict(discriminator=self.optimizer),
-                                    dict(discriminator=bce_discriminator.Loss()),
-                                    None, n_epochs=n_epochs, **kwargs)
+                                    dict(discriminator=bce_discriminator.Loss()), None)
         self.trained = True
 
-    def __call__(self, n_epochs, n_samples, **kwargs):
-        self.train(n_epochs, **kwargs)
+    def __call__(self):
+        self.train()
         with torch.no_grad():
-            samples = self.generator.generate(self.device, n_samples=n_samples)
+            samples = self.generator.generate(self.device, n_samples=self.n_samples)
             y_fake = self.discriminator(samples['x'])
             eval_loss_func = reverse_kl_generator.Loss()
-            result = eval_loss_func._compute_losses(y_fake) / n_samples
+            result = eval_loss_func._compute_losses(y_fake) / self.n_samples
         return result
