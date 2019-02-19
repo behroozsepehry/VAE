@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 from models.vae import normal_base
-from models import mnist_conv_1, mnist_deconv_1
+from models import conv_28, deconv_28
 
 
 class Model(normal_base.VaeModelNormalBase):
@@ -10,8 +10,8 @@ class Model(normal_base.VaeModelNormalBase):
         super(Model, self).__init__(*args, **kwargs)
         mid_channels = kwargs.get('mid_channels', 1)
         z_dim = self.z_args['z_dim']
-        self.encoder = mnist_conv_1.Model(1, mid_channels, 2 * z_dim)
-        self.decoder = mnist_deconv_1.Model(z_dim, mid_channels, 2)
+        self.encoder = conv_28.Model(1, mid_channels, 2 * z_dim)
+        self.decoder = deconv_28.Model(z_dim, mid_channels, 2)
 
     def encode(self, x, **kwargs):
         zz = self.encoder(x)

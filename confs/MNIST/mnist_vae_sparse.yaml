@@ -6,19 +6,19 @@
   "Model":
     {
         "name": "vae/mnist_cnn_normal_1_sparse_2",
-        "mid_channels": 10,
+        "mid_channels": 20,
         "z_args":
         {
             "z_dim": 20,
             "z2_dim": 200,
-            "threshold": 0.01,
+            "threshold": 0.1,
         },
         "sampling_iterations": [0],
       #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
       #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
         "train_args":
           {
-              "n_epochs": 100,
+              "n_epochs": 10,
               "verbose": True,
               "log_interval": 40,
           },
@@ -69,7 +69,7 @@
         "vae":
           {
               "name": "vae/sparse_mse",
-              "l1_weight": 0.01,
+              "l1_weight": 0.1,
               "tol": 0.01,
           },
     },
@@ -107,6 +107,10 @@
                           "l1_weight": [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
                       },
                 },
-          }
-    }
+          },
+    },
+  "Evaluator":
+    {
+      "name": "",
+    },
 }

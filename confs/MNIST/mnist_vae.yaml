@@ -1,7 +1,7 @@
 {
   # The higher level names must be same as the class name!
   "seed": 0,
-  "function": "evaluator",
+  "function": "train",
 
   "Model":
     {
@@ -12,10 +12,11 @@
             "z_dim": 20,
         },
         "sampling_iterations": [0],
-        "load_path": "files/results/MNIST/vae_mse_cnn/model.p",
+#        "save_path": "files/results/MNIST/vae_mse_cnn/model.p",
+#        "load_path": "files/results/MNIST/vae_mse_cnn/model.p",
         "train_args":
           {
-              "n_epochs": 10,
+              "n_epochs": 1,
               "verbose": True,
               "log_interval": 20,
           },
@@ -32,6 +33,17 @@
         "name": "cuda",
     },
 
+  "Optimizers":
+    {
+        "vae":
+          {
+              "name": "Adam",
+              "args":
+                {
+                    "lr": 1.0e-3,
+                },
+          },
+    },
 
   "Dataloaders":
     {
@@ -60,7 +72,7 @@
 
   "Logger":
     {
-        "name": "tensorboard",
+        "name": "",
         "flags":
           {
               "loss": True,
@@ -72,4 +84,33 @@
               "log_dir": "files/results/MNIST/vae_mse_cnn/logs/exp-1",
           }
     },
+
+  "Evaluator":
+    {
+        "name": "reverse_kl",
+        "n_samples": 1024,
+
+        "train_args":
+          {
+            "n_epochs": 10,
+            "verbose": True,
+            "log_interval": 20,
+          },
+        "discriminator_args":
+          {
+              "name": "mnist_conv_1",
+              "in_channels": 1,
+              "mid_channels": 2,
+              "out_channels": 1,
+              "activation": "Sigmoid",
+          },
+        "optim_args":
+          {
+              "name": "Adam",
+              "args":
+                {
+                    "lr": 1.0e-3,
+                },
+          },
+    }
 }

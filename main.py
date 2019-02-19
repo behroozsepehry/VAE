@@ -90,7 +90,7 @@ def hypertune(settings):
 
 def main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
-    parser.add_argument('--conf-path', '-c', type=str, default='confs/mnist_vae.yaml', metavar='N',
+    parser.add_argument('--conf-path', '-c', type=str, default='confs/mnist_vae_sparse.yaml', metavar='N',
                         help='configuration file path')
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:
