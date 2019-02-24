@@ -2,10 +2,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from models.vae import normal_base
+from models.vae import base_normal
 
 
-class Model(normal_base.VaeModelNormalBase):
+class Model(base_normal.VaeModelNormalBase):
     def __init__(self, *args, **kwargs):
         super(Model, self).__init__(*args, **kwargs)
         z_dim = self.z_args['z_dim']

@@ -47,9 +47,55 @@ def get_optimizers(parameters_groups, **kwargs):
     return result
 
 
-def get_dataloaders(**kwargs):
-    dataset_path = kwargs['path']
+def get_dataloaders_image_folder(**kwargs):
     dataset_name = kwargs['name']
+    dataset_path = kwargs['path']
+    dataset_constructor = getattr(datasets, dataset_name)
+
+    dataset = dataset_constructor(dataset_path, transform=transforms.Compose([
+        transforms.Resize(kwargs['image_size']),
+        transforms.CenterCrop(kwargs['image_size']),
+        transforms.ToTensor()]),)
+
+    dataset_size = len(dataset)
+    idxs = range(dataset_size)
+
+    train_ratio = kwargs['ratio']['train']
+    val_ratio = kwargs['ratio'].get('val', 1. - kwargs['ratio'].get('test', 1.-train_ratio) - train_ratio)
+
+    train_split_idx = int(np.floor(train_ratio * dataset_size))
+    val_split_idx = int(np.floor((train_ratio+val_ratio) * dataset_size))
+
+    train_idxs = idxs[:train_split_idx]
+    val_idxs = idxs[train_split_idx:val_split_idx]
+    test_idxs = idxs[val_split_idx:]
+
+    train_sampler = SubsetRandomSampler(train_idxs)
+    val_sampler = SubsetRandomSampler(val_idxs)
+    test_sampler = SubsetRandomSampler(test_idxs)
+
+    dataloaders = {
+        'train': torch.utils.data.DataLoader(
+            dataset,
+            sampler=train_sampler,
+            **kwargs['args']),
+        'test': torch.utils.data.DataLoader(
+            dataset,
+            sampler=test_sampler,
+            **dict(kwargs['args'], shuffle=False)),
+        'val': torch.utils.data.DataLoader(
+            dataset,
+            sampler=val_sampler,
+            **dict(kwargs['args'], shuffle=False)),
+    }
+    return dataloaders
+
+
+def get_dataloaders(**kwargs):
+    dataset_name = kwargs['name']
+    if 'ImageFolder' in dataset_name:
+        return get_dataloaders_image_folder(**kwargs)
+    dataset_path = kwargs['path']
     dataset_constructor = getattr(datasets, dataset_name)
 
     dataset_eval = dataset_constructor(dataset_path, train=False, download=True, transform=transforms.ToTensor())

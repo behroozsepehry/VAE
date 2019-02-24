@@ -1,0 +1,106 @@
+{
+  # The higher level names must be same as the class name!
+  "seed": 0,
+  "function": "train",
+
+  "Model":
+    {
+        "name": "gan/cifar10_cnn",
+        "mid_channels": 20,
+        "z_args":
+          {
+              "z_dim": 20,
+              "name": "standard_normal",
+              "high": 10,
+          },
+      #      "save_path": "files/results/MNIST/vae_mse_fc_repeat_100/model_2.p",
+      #      "load_path": "files/results/MNIST/vae_mse_fc_repeat_100/model.p",
+        "train_args":
+          {
+              "n_epochs": 1000,
+              "verbose": True,
+              "log_interval": 20,
+          },
+        "evaluate_args":
+          {
+              "verbose": True,
+              "path": "files/results/CIFAR10/gan_cnn",
+          },
+    },
+
+  "Device":
+    {
+        "name": "cuda",
+    },
+
+  "Optimizers":
+    {
+        "discriminator":
+        {
+          "name": "Adam",
+          "args":
+            {
+                "lr": 1.0e-03,
+            },
+        },
+
+        "generator":
+        {
+          "name": "Adam",
+          "args":
+            {
+                "lr": 1.0e-03,
+            },
+        },
+    },
+
+
+  "Dataloaders":
+    {
+      "name": "ImageFolder",
+      "path": "files/datasets/CelebA/",
+      "image_size": 64,
+      "ratio":
+        {
+            "val": 0.1,
+            "train": 0.8,
+        },
+      "args":
+        {
+          "batch_size": 128,
+          "pin_memory": True,
+          "num_workers": 4,
+        },
+    },
+
+  "Losses":
+    {
+        "discriminator":
+          {
+              "name": "gan/bce_discriminator",
+              "REAL_LABEL": 0.9,
+          },
+
+        "generator":
+          {
+              "name": "gan/bce_reverse_generator",
+          },
+    },
+
+  "Logger":
+    {
+        "name": "tensorboard",
+        "flags":
+          {
+              "loss": True,
+              "data": False,
+              "conf": True,
+          },
+        "args":
+          {
+              "log_dir": "files/results/CIFAR10/gan_cnn/logs/exp-1",
+          }
+    },
+  "Evaluator":
+    {},
+}

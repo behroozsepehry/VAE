@@ -1,9 +1,9 @@
 import torch
 
-from models.vae import normal_sparse_base
+from models.vae import base_normal_sparse
 
 
-class NormalSparseBase2(normal_sparse_base.NormalSparseBase):
+class NormalSparseBase2(base_normal_sparse.NormalSparseBase):
     def __init__(self, *args, **kwargs):
         super(NormalSparseBase2, self).__init__(*args, **kwargs)
 

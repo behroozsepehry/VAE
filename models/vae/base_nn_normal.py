@@ -1,17 +1,15 @@
 import torch
 from torch import nn
 
-from models.vae import normal_base
+from models.vae import base_normal
 from models import conv_28, deconv_28
 
 
-class Model(normal_base.VaeModelNormalBase):
+class Model(base_normal.VaeModelNormalBase):
     def __init__(self, *args, **kwargs):
         super(Model, self).__init__(*args, **kwargs)
-        mid_channels = kwargs.get('mid_channels', 1)
-        z_dim = self.z_args['z_dim']
-        self.encoder = conv_28.Model(1, mid_channels, 2 * z_dim)
-        self.decoder = deconv_28.Model(z_dim, mid_channels, 2)
+        self.encoder = None
+        self.decoder = None
 
     def encode(self, x, **kwargs):
         zz = self.encoder(x)

@@ -1,0 +1,91 @@
+{
+  # The higher level names must be same as the class name!
+  "seed": 0,
+  "function": "train",
+
+  "Model":
+    {
+        "name": "vae/cnn_64_normal",
+        "mid_channels": 20,
+        "in_channels": 3,
+        "z_args":
+        {
+            "z_dim": 100,
+        },
+        "sampling_iterations": [0],
+#        "save_path": "files/results/CelebA/vae_mse_cnn/model_1.p",
+#        "load_path": "files/results/CelebA/vae_mse_cnn/model_10.p",
+        "train_args":
+          {
+              "n_epochs": 10,
+              "verbose": True,
+              "log_interval": 20,
+          },
+        "evaluate_args":
+          {
+              "verbose": True,
+              "path": "files/results/CelebA/vae_mse_cnn",
+          },
+    },
+
+
+  "Device":
+    {
+        "name": "cuda",
+    },
+
+  "Optimizers":
+    {
+        "vae":
+          {
+              "name": "Adam",
+              "args":
+                {
+                    "lr": 1.0e-3,
+                },
+          },
+    },
+
+  "Dataloaders":
+    {
+      "name": "ImageFolder",
+      "path": "files/datasets/CelebA/",
+      "image_size": 64,
+      "ratio":
+        {
+            "val": 0.1,
+            "train": 0.8,
+        },
+      "args":
+        {
+          "batch_size": 128,
+          "pin_memory": True,
+          "num_workers": 4,
+        },
+    },
+
+  "Losses":
+    {
+        "vae":
+          {
+              "name": "vae/mse",
+          },
+    },
+
+  "Logger":
+    {
+        "name": "",
+        "flags":
+          {
+              "loss": True,
+              "data": False,
+              "conf": True,
+          },
+        "args":
+          {
+              "log_dir": "files/results/CelebA/vae_mse_cnn/logs/exp-1",
+          }
+    },
+
+  "Evaluator": {},
+}
