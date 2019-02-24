@@ -32,6 +32,6 @@ if __name__ == '__main__':
     import torch
     model = Model(1, 10, 20, activation='Sigmoid')
     x = torch.randn(2, 1, 32, 32)
-    y = model.cnn(x)
+    y = model(x)
     print(y)
     print(y.size())
