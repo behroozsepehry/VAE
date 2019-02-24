@@ -5,9 +5,12 @@
 
   "Model":
     {
-        "name": "vae/cnn_64_normal",
+        "name": "vae/cnn_pow2_normal",
         "mid_channels": 20,
         "in_channels": 3,
+        "in_size": 128,
+        "ngpu": 4,
+
         "z_args":
         {
             "z_dim": 100,
@@ -50,7 +53,8 @@
     {
       "name": "ImageFolder",
       "path": "files/datasets/CelebA/",
-      "image_size": 64,
+      "image_size": 128,
+      "p_rand_flip": 0.5,
       "ratio":
         {
             "val": 0.1,

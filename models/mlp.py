@@ -1,9 +1,13 @@
 from torch import nn
 
+from utilities import nn_utilities as n_util
+
 
 class Model(nn.Module):
     def __init__(self, layer_sizes, **kwargs):
         super(Model, self).__init__()
+        self.ngpu = kwargs.get('ngpu', 1)
+
         n_l = len(layer_sizes) - 1
         assert n_l >= 1
         layers = []
@@ -16,5 +20,6 @@ class Model(nn.Module):
             layers += [(getattr(nn, activation_name)())]
         self.mlp = nn.Sequential(*layers)
 
-    def forward(self, *input):
-        return self.mlp(*input)
+    def forward(self, input):
+        output = n_util.data_parallel_model(self.mlp, input, self.ngpu)
+        return output

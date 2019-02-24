@@ -52,9 +52,12 @@ def get_dataloaders_image_folder(**kwargs):
     dataset_path = kwargs['path']
     dataset_constructor = getattr(datasets, dataset_name)
 
+    p_rand_flip = kwargs.get('p_rand_flip', 0.)
+
     dataset = dataset_constructor(dataset_path, transform=transforms.Compose([
         transforms.Resize(kwargs['image_size']),
         transforms.CenterCrop(kwargs['image_size']),
+        transforms.RandomHorizontalFlip(p_rand_flip),
         transforms.ToTensor()]),)
 
     dataset_size = len(dataset)

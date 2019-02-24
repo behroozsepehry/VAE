@@ -5,11 +5,15 @@
 
   "Model":
     {
-        "name": "gan/cifar10_cnn",
+        "name": "gan/cnn_pow2",
         "mid_channels": 20,
+        "in_channels": 3,
+        "in_size": 128,
+        "ngpu": 4,
+
         "z_args":
           {
-              "z_dim": 20,
+              "z_dim": 100,
               "name": "standard_normal",
               "high": 10,
           },
@@ -24,7 +28,7 @@
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/CIFAR10/gan_cnn",
+              "path": "files/results/CelebA/gan_cnn_normal",
           },
     },
 
@@ -59,7 +63,8 @@
     {
       "name": "ImageFolder",
       "path": "files/datasets/CelebA/",
-      "image_size": 64,
+      "image_size": 128,
+      "p_rand_flip": 0.5,
       "ratio":
         {
             "val": 0.1,
@@ -89,7 +94,7 @@
 
   "Logger":
     {
-        "name": "tensorboard",
+        "name": "",
         "flags":
           {
               "loss": True,
@@ -98,7 +103,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/CIFAR10/gan_cnn/logs/exp-1",
+              "log_dir": "files/results/CelebA/gan_cnn_normal/logs/exp-1",
           }
     },
   "Evaluator":

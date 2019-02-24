@@ -1,9 +1,13 @@
 from torch import nn
 
+from utilities import nn_utilities as n_util
+
 
 class Model(nn.Module):
     def __init__(self, in_channels, mid_channels, out_channels, **kwargs):
         super(Model, self).__init__()
+        self.ngpu = kwargs.get('ngpu', 1)
+
         activation_name = kwargs.get('activation')
         activation = []
         if activation_name:
@@ -25,7 +29,8 @@ class Model(nn.Module):
         )
 
     def forward(self, x):
-        return self.cnn(x).view(x.size(0), -1)
+        output = n_util.data_parallel_model(self.cnn, x, self.ngpu)
+        return output.view(x.size(0), -1)
 
 
 if __name__ == '__main__':
