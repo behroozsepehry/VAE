@@ -28,6 +28,7 @@
         "evaluate_args":
           {
               "verbose": True,
+              "n_samples": 16,
               "path": "files/results/CelebA/gan_cnn_normal",
           },
     },
@@ -44,7 +45,8 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-03,
+                "lr": 2.0e-04,
+                "betas": [0.5, 0.999],
             },
         },
 
@@ -53,7 +55,8 @@
           "name": "Adam",
           "args":
             {
-                "lr": 1.0e-03,
+                "lr": 2.0e-04,
+                "betas": [0.5, 0.999],
             },
         },
     },

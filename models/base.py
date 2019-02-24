@@ -146,10 +146,10 @@ class ModelBase(nn.Module):
             for k, v in test_losses_avg_key_value:
                 logger.add_scalar('loss/%s_%s' % (name, k), v, epoch)
 
-        batch_size = tester_loader.batch_size
         if hasattr(self, 'generate'):
+            n_eval_samples = self.evaluate_args.get('n_samples', 8)
             with torch.no_grad():
-                samples = self.generate(device, n_samples=batch_size, do_sampling_iterations=True)
+                samples = self.generate(device, n_samples=n_eval_samples, do_sampling_iterations=True)
                 sample_x, sample_z = samples['x'], samples['z']
                 if type(sample_x) != list:
                     sample_x_list = [sample_x]
@@ -158,7 +158,7 @@ class ModelBase(nn.Module):
                     sample_x_list = sample_x
                     sample_z_list = sample_z
                 for i, s in enumerate(sample_x_list):
-                    x_images = s.cpu().view((batch_size,) + x.size()[1:])
+                    x_images = s.cpu().view((n_eval_samples,) + x.size()[1:])
                     save_image(x_images,
                                results_path + '/sample_' + str(epoch) + '_' + str(i+1) + '.png')
                     if logger and logger.flags.get('data'):

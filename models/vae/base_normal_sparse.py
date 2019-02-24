@@ -11,8 +11,7 @@ class NormalSparseBase(base_normal.VaeModelNormalBase):
         z_dim = self.z_args['z_dim']
         self.fcd_1 = nn.Linear(z_dim, z2_dim)
         self.fcd_2 = nn.Sequential(nn.Linear(z2_dim, z_dim),
-                                    nn.ReLU(True),
-                                    )
+                                   nn.ReLU(True),)
 
     def _denoise(self, z, **kwargs):
         h1 = self.fcd_1(z)

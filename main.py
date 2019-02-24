@@ -90,7 +90,7 @@ def hypertune(settings):
 
 def main():
     parser = argparse.ArgumentParser(description='Variational Auto Encoder Experiments')
-    parser.add_argument('--conf-path', '-c', type=str, default='confs/MNIST/gan.yaml', metavar='N',
+    parser.add_argument('--conf-path', '-c', type=str, default='confs/CelebA/gan.yaml', metavar='N',
                         help='configuration file path')
     args = parser.parse_args()
     with open(args.conf_path, 'rb') as f:

@@ -15,7 +15,7 @@
         {
             "z_dim": 100,
         },
-        "sampling_iterations": [0],
+        "sampling_iterations": [0,1,2],
 #        "save_path": "files/results/CelebA/vae_mse_cnn/model_1.p",
 #        "load_path": "files/results/CelebA/vae_mse_cnn/model_10.p",
         "train_args":
@@ -27,6 +27,7 @@
         "evaluate_args":
           {
               "verbose": True,
+              "n_samples": 16,
               "path": "files/results/CelebA/vae_mse_cnn",
           },
     },
@@ -44,7 +45,8 @@
               "name": "Adam",
               "args":
                 {
-                    "lr": 1.0e-3,
+                    "lr": 2.0e-04,
+                    "betas": [0.5, 0.999],
                 },
           },
     },
