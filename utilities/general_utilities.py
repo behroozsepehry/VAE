@@ -47,3 +47,13 @@ def __get_list_size_of_dict_of_lists(dict_of_lists, result):
 
 def get_list_size_of_dict_of_lists(dict_of_lists):
     return __get_list_size_of_dict_of_lists(dict_of_lists, [])
+
+
+def is_power2(num):
+    """
+    Author: A.Polino
+    states if a number is a power of two
+    """
+    return num != 0 and ((num & (num - 1)) == 0)
+
+

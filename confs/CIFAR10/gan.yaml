@@ -5,8 +5,11 @@
 
   "Model":
     {
-        "name": "gan/cifar10_cnn",
+        "name": "gan/cnn_pow2",
         "mid_channels": 20,
+        "in_channels": 3,
+        "in_size": 32,
+
         "z_args":
           {
               "z_dim": 20,
@@ -24,7 +27,7 @@
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/CIFAR10/gan_cnn",
+              "path": "files/results/CIFAR10/gan_cnn_normal",
           },
     },
 
@@ -88,7 +91,7 @@
 
   "Logger":
     {
-        "name": "tensorboard",
+        "name": "",
         "flags":
           {
               "loss": True,

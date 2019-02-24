@@ -36,6 +36,7 @@ class Model(nn.Module):
 if __name__ == '__main__':
     import torch
     model = Model(1, 10, 20, activation='Sigmoid')
+    print(model)
     x = torch.randn(2, 1, 64, 64)
     y = model(x)
     print(y)
