@@ -9,18 +9,18 @@
         "mid_channels": 20,
         "in_channels": 3,
         "in_size": 128,
-        "ngpu": 4,
+        "ngpu": 1,
 
         "z_args":
         {
             "z_dim": 100,
         },
         "sampling_iterations": [0,1,2],
-#        "save_path": "files/results/CelebA/vae_mse_cnn/model_1.p",
+        "save_path": "files/results/CelebA/vae_mse_cnn/model.p",
 #        "load_path": "files/results/CelebA/vae_mse_cnn/model_10.p",
         "train_args":
           {
-              "n_epochs": 10,
+              "n_epochs": 1000,
               "verbose": True,
               "log_interval": 20,
           },

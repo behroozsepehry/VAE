@@ -45,8 +45,8 @@ class GanModelBase(models.base.ModelBase):
         g_loss['loss'].backward()
         g_optim.step()
 
-        losses = dict(**g_util.append_key_dict(d_loss, 'discriminator_'),
-                      **g_util.append_key_dict(g_loss, 'generator_'))
+        losses = dict(**g_util.append_key_dict(g_loss, 'generator_'),
+                      **g_util.append_key_dict(d_loss, 'discriminator_'),)
         # print(y_real.mean().item(), y_fake.mean().item())
         # print(d_optim.param_groups[0]['params'][0].grad.cpu().numpy())
         # print('######################')

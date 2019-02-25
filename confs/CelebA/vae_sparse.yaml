@@ -5,20 +5,21 @@
 
   "Model":
     {
-        "name": "gan/cnn_pow2",
+        "name": "vae/cnn_pow2_normal_sparse_2",
         "mid_channels": 20,
         "in_channels": 3,
         "in_size": 128,
         "ngpu": 1,
 
         "z_args":
-          {
-              "z_dim": 100,
-              "name": "standard_normal",
-              "high": 10,
-          },
-        "save_path": "files/results/CelebA/gan_cnn_normal/model.p",
-      #      "load_path": "files/results/CelebA/gan_cnn_normal/model.p",
+        {
+            "z_dim": 100,
+            "z2_dim": 500,
+            "threshold": 0.1,
+        },
+        "sampling_iterations": [0,1,2],
+        "save_path": "files/results/CelebA/vae_mse_cnn_sparse/model.p",
+#        "load_path": "files/results/CelebA/vae_mse_cnn_sparse/model_10.p",
         "train_args":
           {
               "n_epochs": 1000,
@@ -29,9 +30,10 @@
           {
               "verbose": True,
               "n_samples": 16,
-              "path": "files/results/CelebA/gan_cnn_normal",
+              "path": "files/results/CelebA/vae_mse_cnn_sparse",
           },
     },
+
 
   "Device":
     {
@@ -40,27 +42,16 @@
 
   "Optimizers":
     {
-        "discriminator":
-        {
-          "name": "Adam",
-          "args":
-            {
-                "lr": 2.0e-04,
-                "betas": [0.5, 0.999],
-            },
-        },
-
-        "generator":
-        {
-          "name": "Adam",
-          "args":
-            {
-                "lr": 2.0e-04,
-                "betas": [0.5, 0.999],
-            },
-        },
+        "vae":
+          {
+              "name": "Adam",
+              "args":
+                {
+                    "lr": 2.0e-04,
+                    "betas": [0.5, 0.999],
+                },
+          },
     },
-
 
   "Dataloaders":
     {
@@ -83,15 +74,11 @@
 
   "Losses":
     {
-        "discriminator":
+        "vae":
           {
-              "name": "gan/bce_discriminator",
-              "REAL_LABEL": 0.9,
-          },
-
-        "generator":
-          {
-              "name": "gan/bce_reverse_generator",
+              "name": "vae/sparse_mse",
+              "l1_weight": 0.1,
+              "tol": 0.1,
           },
     },
 
@@ -106,9 +93,9 @@
           },
         "args":
           {
-              "log_dir": "files/results/CelebA/gan_cnn_normal/logs/exp-1",
+              "log_dir": "files/results/CelebA/vae_mse_cnn_sparse/logs/exp-1",
           }
     },
-  "Evaluator":
-    {},
+
+  "Evaluator": {},
 }
