@@ -17,7 +17,7 @@
               "name": "standard_normal",
               "high": 10,
           },
-        "save_path": "files/results/CelebA/gan_cnn_normal/model.p",
+        "save_path": "files/results/CelebA/gan_normal/model.p",
       #      "load_path": "files/results/CelebA/gan_cnn_normal/model.p",
         "train_args":
           {
@@ -29,7 +29,7 @@
           {
               "verbose": True,
               "n_samples": 16,
-              "path": "files/results/CelebA/gan_cnn_normal",
+              "path": "files/results/CelebA/gan_normal",
           },
     },
 
@@ -97,7 +97,7 @@
 
   "Logger":
     {
-        "name": "",
+        "name": "tensorboard",
         "flags":
           {
               "loss": True,
@@ -106,7 +106,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/CelebA/gan_cnn_normal/logs/exp-1",
+              "log_dir": "files/results/CelebA/gan_normal/logs/exp-1",
           }
     },
   "Evaluator":

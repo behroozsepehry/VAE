@@ -80,7 +80,7 @@
 
   "Logger":
     {
-        "name": "",
+        "name": "tensorboard",
         "flags":
           {
               "loss": True,

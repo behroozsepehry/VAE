@@ -73,13 +73,14 @@ def hypertune(settings):
         g_util.choose_1_from_dict_of_lists(hypertune_params_settings, choice, train_settings)
         vals = train(train_settings)
         mu = np.mean(vals)
-        std = np.std(vals)
-        t_df = len(vals) - 1
-        dist = stats.t(t_df)
+        std = np.std(vals, ddof=1)
+        n = len(vals)
+        df = n-1
+        dist = stats.t(df)
         if mu < best_mu:
             # p_value for hypothesis of whether the best and second best hypeparameter are similar
             # 0 means very dissimilar
-            p_val = 2. * (1. - dist.cdf(np.abs((mu - best_mu) / np.linalg.norm([std, best_std]))))
+            p_val = 2. * (1. - dist.cdf(np.abs((mu - best_mu) * np.sqrt(n) / np.linalg.norm([std, best_std]))))
             best_mu = mu
             best_std = std
             best_choice = copy.deepcopy(choice)
