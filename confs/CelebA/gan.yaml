@@ -14,10 +14,10 @@
         "z_args":
           {
               "z_dim": 100,
-              "name": "standard_normal",
+              "name": "uniform_int",
               "high": 10,
           },
-        "save_path": "files/results/CelebA/gan_normal/model.p",
+        "save_path": "files/results/CelebA/gan_uint/model.p",
       #      "load_path": "files/results/CelebA/gan_cnn_normal/model.p",
         "train_args":
           {
@@ -29,7 +29,7 @@
           {
               "verbose": True,
               "n_samples": 16,
-              "path": "files/results/CelebA/gan_normal",
+              "path": "files/results/CelebA/gan_uint",
           },
     },
 
@@ -106,7 +106,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/CelebA/gan_normal/logs/exp-1",
+              "log_dir": "files/results/CelebA/gan_uint/logs/exp-1",
           }
     },
   "Evaluator":

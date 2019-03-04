@@ -15,10 +15,10 @@
         {
             "z_dim": 100,
             "z2_dim": 500,
-            "threshold": 10.0,
+            "threshold": 0.0,
         },
         "sampling_iterations": [0,1,2],
-        "save_path": "files/results/CelebA/vae_sparse_10/model.p",
+        "save_path": "files/results/CelebA/vae_sparse_0/model.p",
 #        "load_path": "files/results/CelebA/vae_mse_cnn_sparse/model_10.p",
         "train_args":
           {
@@ -30,7 +30,7 @@
           {
               "verbose": True,
               "n_samples": 16,
-              "path": "files/results/CelebA/vae_sparse_10",
+              "path": "files/results/CelebA/vae_sparse_0",
           },
     },
 
@@ -77,7 +77,7 @@
         "vae":
           {
               "name": "vae/sparse_mse",
-              "l1_weight": 10.0,
+              "l1_weight": 0.0,
               "tol": 0.1,
           },
     },
@@ -93,7 +93,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/CelebA/vae_sparse_10/logs/exp-1",
+              "log_dir": "files/results/CelebA/vae_sparse_0/logs/exp-1",
           }
     },
 

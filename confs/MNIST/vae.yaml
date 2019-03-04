@@ -5,15 +5,15 @@
 
   "Model":
     {
-        "name": "vae/mnist_cnn_normal_1",
+        "name": "vae/cnn_28_normal",
         "mid_channels": 20,
         "z_args":
         {
             "z_dim": 20,
         },
         "sampling_iterations": [0],
-#        "save_path": "files/results/MNIST/vae_mse_cnn/model_1.p",
-        "load_path": "files/results/MNIST/vae_mse_cnn/model_10.p",
+#        "save_path": "files/results/MNIST/vae_mse_cnn/model_10.p",
+        "load_path": "files/results/MNIST/vae_mse_cnn/model_1.p",
         "train_args":
           {
               "n_epochs": 0,
@@ -72,7 +72,7 @@
 
   "Logger":
     {
-        "name": "",
+        "name": "tensorboard",
         "flags":
           {
               "loss": True,
@@ -87,12 +87,12 @@
 
   "Evaluator":
     {
-        "name": "kl",
+        "name": "reverse_kl",
         "n_samples": 1024,
 
         "train_args":
           {
-            "n_epochs": 100,
+            "n_epochs": 20,
             "verbose": True,
             "log_interval": 20,
           },
@@ -100,7 +100,7 @@
           {
               "name": "conv_28",
               "in_channels": 1,
-              "mid_channels": 2,
+              "mid_channels": 1,
               "out_channels": 1,
               "activation": "Sigmoid",
           },
