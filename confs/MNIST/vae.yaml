@@ -13,10 +13,10 @@
         },
         "sampling_iterations": [0],
 #        "save_path": "files/results/MNIST/vae_mse_cnn/model_10.p",
-        "load_path": "files/results/MNIST/vae_mse_cnn/model_1.p",
+#        "load_path": "files/results/MNIST/vae_mse_cnn/model_1.p",
         "train_args":
           {
-              "n_epochs": 0,
+              "n_epochs": 100,
               "verbose": True,
               "log_interval": 20,
           },
@@ -87,7 +87,7 @@
 
   "Evaluator":
     {
-        "name": "reverse_kl",
+        "name": "",
         "n_samples": 1024,
 
         "train_args":
