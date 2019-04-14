@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn
 from torch.nn import functional as F
-
 from losses import base
 
 
@@ -12,9 +11,10 @@ class Loss(base.LossBase):
 
     # Reconstruction + KL divergence losses summed over all elements and batch
     def __call__(self, x, x_mu, x_logvar, z_mu, z_logvar, **kwargs):
-        mse = 0.5 * (torch.sum(x_logvar.exp() + (((x_mu - x.view(x_mu.size())).pow(2))/(x_logvar.exp())))
-                     + z_mu.size(0) * z_mu.size(1) * np.log(2*np.pi))
+        # mse = 0.5 * (torch.sum(x_logvar.exp() + (((x_mu - x.view(x_mu.size())).pow(2))/(x_logvar.exp())))
+        #              + z_mu.size(0) * z_mu.size(1) * np.log(2*np.pi))
 
+        mse = 0.5 * torch.sum((((x_mu - x.view(x_mu.size())).pow(2))/((x_logvar).exp())) + x_logvar)
         # mse = 0.5 * (torch.sum(x_logvar + (((x_mu - x.view(x_mu.size())).pow(2)) / (x_logvar.exp())))
         #              + z_mu.size(0) * z_mu.size(1) * np.log(2*np.pi))
         # print(x_logvar.min(), x_logvar.mean())

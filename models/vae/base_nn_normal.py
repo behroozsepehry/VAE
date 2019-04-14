@@ -20,5 +20,5 @@ class Model(base_normal.VaeModelNormalBase):
         xx = self.decoder(z)
         x_mu, x_logvar = torch.split(xx, xx.size(1)//2, dim=1)
         x_mu = torch.sigmoid(x_mu)
-        x_logvar = torch.clamp(x_logvar, min=-10.)
+        x_logvar = torch.clamp(x_logvar, min=-2.)
         return dict(x_mu=x_mu, x_logvar=x_logvar)

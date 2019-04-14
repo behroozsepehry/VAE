@@ -12,8 +12,8 @@
             "z_dim": 20,
         },
         "sampling_iterations": [0],
-#        "save_path": "files/results/MNIST/vae_mse_cnn/model_10.p",
-#        "load_path": "files/results/MNIST/vae_mse_cnn/model_1.p",
+#        "save_path": "files/results/MNIST/vae_bce_cnn/model_10.p",
+#        "load_path": "files/results/MNIST/vae_bce_cnn/model_1.p",
         "train_args":
           {
               "n_epochs": 100,
@@ -23,7 +23,7 @@
         "evaluate_args":
           {
               "verbose": True,
-              "path": "files/results/MNIST/vae_mse_cnn",
+              "path": "files/results/MNIST/vae_bce_cnn",
           },
     },
 
@@ -66,7 +66,7 @@
     {
         "vae":
           {
-              "name": "vae/mse",
+              "name": "vae/bce",
           },
     },
 
@@ -81,7 +81,7 @@
           },
         "args":
           {
-              "log_dir": "files/results/MNIST/vae_mse_cnn/logs/exp-1",
+              "log_dir": "files/results/MNIST/vae_bce_cnn/logs/exp-1",
           }
     },
 
