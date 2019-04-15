@@ -132,8 +132,7 @@ class ModelBase(nn.Module):
                 if 'vae' in self.name and batch_idx == 0:
                     n = min(x.size(0), 8)
                     x_mu = model_out['x_mu']
-                    comparison = torch.cat([x[:n],
-                                            x_mu.view(x.size())[:n]])
+                    comparison = torch.cat((x[:n], x_mu.view(x.size())[:n]))
                     save_image(comparison.cpu(),
                                results_path + '/reconstruction_' + name + '_' + str(epoch) + '.png', nrow=n)
 
