@@ -17,3 +17,4 @@ class Sampler(object):
 
     def __call__(self, size):
         return self._sampler_func(size)
+
