@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple, Any
 import torch
 
 import models.base
@@ -7,7 +7,11 @@ from utilities import main_utilities as m_util
 
 
 class Model(models.base.ModelBase):
-    def __init__(self, enf_args: Dict, def_args: Dict, enz_args_list: List[Dict], dez_args_list: List[Dict],
+    def __init__(self,
+                 enf_args: Dict[str, Any],
+                 def_args: Dict[str, Any],
+                 enz_args_list: List[Dict[str, Any]],
+                 dez_args_list: List[Dict[str, Any]],
                  *args, **kwargs):
         """
         :param enf_args: encoder feature extractor model args
@@ -20,18 +24,18 @@ class Model(models.base.ModelBase):
         super(Model, self).__init__(*args, **kwargs)
         self.enf = m_util.get_model(**enf_args)
         self.def_ = m_util.get_model(**def_args)
-        self.enz_list = [m_util.get_model(**enz_args) for enz_args in enz_args_list]
-        self.dez_list = [m_util.get_model(**dez_args) for dez_args in dez_args_list]
+        self.enz = [m_util.get_model(**enz_args) for enz_args in enz_args_list]
+        self.dez = [m_util.get_model(**dez_args) for dez_args in dez_args_list]
 
-    def get_z_args(self, zz):
+    def get_z_args(self, zz: torch.Tensor) -> Dict[str, torch.Tensor]:
         z_mu, z_logvar = torch.split(zz, zz.size(1) // 2, dim=1)
         return dict(z_mu=z_mu, z_logvar=z_logvar)
 
-    def encode(self, x):
+    def encode(self, x: torch.Tensor) -> List[Dict[str, torch.Tensor]]:
         features = self.enf(x)
         z_params = []
-        for i in range(len(self.enz_list)):
-            encoder = self.enz_list[i]
+        for i in range(len(self.enz)):
+            encoder = self.enz[i]
             zz = encoder(features)
             z_params = self.get_z_args(zz)
             z = self.reparameterize(**z_params)
@@ -40,8 +44,12 @@ class Model(models.base.ModelBase):
             features = torch.cat((features, z))
         return z_params
 
-    def decode(self, z):
-        return self.def_(z)
+    def get_total_z(self, z_params: List[Dict[str, torch.Tensor]]) -> torch.Tensor:
+        return torch.cat([z_p['z'] for z_p in z_params], dim=1)
+
+    def decode(self, z_params: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
+        z = self.get_total_z(z_params)
+
 
     def generate_z(self):
         pass
